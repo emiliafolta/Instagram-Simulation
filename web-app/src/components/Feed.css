@@ -1,0 +1,12 @@
+.feedLoader{
+    height: 3rem;
+    width: 100%;
+    min-width: 5rem;
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.circularProgress{
+    color: purple !important;
+}

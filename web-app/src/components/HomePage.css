@@ -1,0 +1,25 @@
+.feedContainer{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.homePageTopBar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: fixed;
+    width: 95%;
+    padding: 1rem;
+}
+
+.homePageMenuButton{
+    font-size: 2rem !important;
+    color: purple;
+}
+
+.homePageProfileButton{
+    font-size: 3rem !important;
+    color: purple;
+}

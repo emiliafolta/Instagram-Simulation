@@ -1,0 +1,15 @@
+PREFIX : <http://example.org/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+:start {
+  :User {
+    schema:name xsd:string,
+    schema:url xsd:anyURI,
+    schema:interest @:Category*
+  }
+  
+  :Category {
+    xsd:string
+  }
+}
