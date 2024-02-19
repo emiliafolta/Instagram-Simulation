@@ -4,10 +4,12 @@ import { useState } from "react";
 import SettingsDialog from "./SettingsDialog";
 // import icons
 import MenuIcon from '@mui/icons-material/Menu';
+import { useSolidAuth } from "@ldo/solid-react";
+import LoginPopover from "./Popover";
 
 
 const Header = () => {
-  // const { session, login, logout } = useSolidAuth();
+  const { session, login, logout } = useSolidAuth();
 
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
   const [loginDialogOpen, setLoginDialogOpen] = useState(false)
@@ -27,7 +29,8 @@ const Header = () => {
             <MenuIcon className="homePageMenuButton" />
         </IconButton>
         <SettingsDialog open={settingsDialogOpen} onClose={handleSettingsDialogClose} />
-      </Box>     
+      </Box>  
+      <LoginPopover/>   
     </header>
   );
 };
