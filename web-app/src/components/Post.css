@@ -1,0 +1,45 @@
+.postContainer{
+    display: flex;
+    flex-direction: column;
+    width: 30rem;
+    align-items: center;
+    border: 1px solid lightgrey;
+    margin: 1rem;
+}
+
+.postMedia{
+    width: 100%;
+}
+
+.postButtons{
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    padding: 0.5rem;
+}
+
+.postButton{
+    font-size: 2rem !important;
+}
+
+.postLikeButton{
+    color: purple !important;
+}
+
+.postCategory{
+    display: flex;
+    padding: 0.5rem;
+    width: 100%;
+    align-items: center;
+    padding: 1rem
+}
+
+.postCategoryAvatar{
+    margin: 0 1rem;
+}
+
+.postCaption{
+    font-size: 0.9rem !important;
+    width: 90%;
+    padding: 0 0 1rem 0;
+}
