@@ -9,42 +9,37 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
-drop_post_table = "DROP TABLE Post"
-drop_user_table = "DROP TABLE User"
+drop_posts_table = "DROP TABLE Posts"
+drop_categories_table = "DROP TABLE Categories"
 
 # Drop tables (in the right order)
-cursor.execute(drop_post_table)
-cursor.execute(drop_user_table)
+cursor.execute(drop_posts_table)
+cursor.execute(drop_categories_table)
 
-create_user_table = """CREATE TABLE User (
-    id bigint NOT NULL,
-    username varchar(50) NOT NULL,
-    name varchar(50),
-    biography varchar(250), 
+create_categories_table = """CREATE TABLE Categories (
+    id int NOT NULL,
+    name varchar(50) NOT NULL,
     profile_picture_url varchar(1000),
-    followers_count int,
-    follows_count int,
-    media_count int,
+    gender int,
+    age_group varchar(50),
     PRIMARY KEY (id)
 )"""
 
 
 # media_product_type: AD, FEED, STORY or REELS.
 # media_type: CAROUSEL_ALBUM, IMAGE, or VIDEO.
-create_post_table = """CREATE TABLE Post (
+create_posts_table = """CREATE TABLE Posts (
     id bigint NOT NULL,
-    userID bigint NOT NULL,
-    caption varchar(1000),
+    category_id int NOT NULL,
+    caption varchar(2500),
     like_count int,
-    comments_count int,
-    media_product_type varchar(50),
     media_type varchar(50),
-    media_url varchar(1000),
-    timestamp varchar(50),
+    media_name varchar(50),
+    location varchar(100),
     PRIMARY KEY (id),
-    FOREIGN KEY (userID) REFERENCES User(id)
+    FOREIGN KEY (category_id) REFERENCES Categories(id)
 )"""
 
 # Create tables (in the right order)
-cursor.execute(create_user_table)
-cursor.execute(create_post_table)
+cursor.execute(create_categories_table)
+cursor.execute(create_posts_table)
