@@ -11,10 +11,11 @@ const exampleCategory: ICategory = {id:0, name:"cat0", image:"url"}
 const examplePost: IPost = {id:0, 
     category:exampleCategory, 
     media_type:IMediaType.IMAGE, 
-    media_url:'https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg', 
+    media_url:'images/jk-placeholder-image.jpg', 
     caption:'caption caption caption'}
 
 const Feed = () => {
+  const { session } = useSolidAuth();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -53,7 +54,7 @@ const Feed = () => {
     fetchData();
   }, []);
 
-  if (false) return <p>No blog available. Log in first.</p>;
+  if (!session.isLoggedIn) return <p>No blog available. Log in first.</p>;
   else return (
     <div>
       <InfiniteScroll

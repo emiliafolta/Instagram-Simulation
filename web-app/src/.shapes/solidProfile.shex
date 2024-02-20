@@ -1,15 +1,37 @@
-PREFIX : <http://example.org/>
-PREFIX schema: <http://schema.org/>
+PREFIX : <https://shaperepo.com/schemas/solidProfile#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX sp: <http://www.w3.org/ns/pim/space#>
+PREFIX solid: <http://www.w3.org/ns/solid/terms#>
 
-:start {
-  :User {
-    schema:name xsd:string,
-    schema:url xsd:anyURI,
-    schema:interest @:Category*
-  }
-  
-  :Category {
-    xsd:string
-  }
+:SolidProfileShape {
+  :username xsd:string 
+    // rdfs:comment "User's username which is the Solid webID" ;
+  :location xsd:string ? 
+    // rdfs:comment "User's location (optional)" ;
+  :age xsd:integer ? 
+    // rdfs:comment "User's age (optional)" ;
+  :gender xsd:string ? 
+    // rdfs:comment "User's gender (optional)" ;
+  :categories @:Category * 
+    // rdfs:comment "A list of categories that the user selected as their interests" ;
+  :liked_categories @:CategoryLikes * 
+    // rdfs:comment "A list of categories that the user liked and the number of likes" ;
+  sp:storage IRI *
+    // rdfs:comment  "The location of a Solid storage server related to this WebId" ;
+  solid:account IRI ?
+    // rdfs:comment  "The user's account" ;
+  solid:privateTypeIndex IRI *
+    // rdfs:comment  "A registry of all types used on the user's Pod (for private access only)" ;
+  solid:publicTypeIndex IRI *
+    // rdfs:comment  "A registry of all types used on the user's Pod (for public access)" ;
+}
+
+:Category {
+  :category_name xsd:string ;
+}
+
+:CategoryLikes {
+  :category_name xsd:string ;
+  :likes xsd:integer;
 }
