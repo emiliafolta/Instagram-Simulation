@@ -29,8 +29,8 @@ const Header = () => {
             <MenuIcon className="homePageMenuButton" />
         </IconButton>
         <SettingsDialog open={settingsDialogOpen} onClose={handleSettingsDialogClose} />
-      </Box>  
-      <LoginPopover/>   
+        <LoginPopover/>
+      </Box>     
     </header>
   );
 };
