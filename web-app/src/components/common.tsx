@@ -17,9 +17,11 @@ export interface ICategory {
 export interface IPost {
     id: number,
     category: ICategory,
-    media_type: IMediaType,
-    media_url: string, // assuming URL to media is provided
     caption: string,
+    like_count: number,
+    media_type: IMediaType,
+    media_name: string, 
+    location: string,    
 }
 
 export enum IMediaType {
