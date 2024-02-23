@@ -2,14 +2,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
-import { FC, useState } from 'react';
+import { FC } from 'react';
+import { useSolidAuth } from "@ldo/solid-react";
+
+import ProfilePanel from './ProfilePanel';
+import { ISessionInfo } from "@inrupt/solid-client-authn-browser";
 
 interface SettingsDialogProps {
     open: boolean
     onClose: () => void
+    sessionInfo?: ISessionInfo
 }
 
-const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose}) => {
+const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose, sessionInfo}) => {
 
   const paperProps = {
     minWidth: "40rem", 
@@ -22,12 +27,14 @@ const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose}) => {
   return (
     <Dialog open={open} onClose={onClose} sx={{"& .MuiDialog-paper": paperProps}}>
         <DialogTitle className="settings-dialog-title" >
-            Dialog
+            Preferences and user details
         </DialogTitle>
-        <Typography >Type type type</Typography>
-        <DialogContent className="settings-dialog-container">
-           Content content content
-        </DialogContent>
+        {sessionInfo?.isLoggedIn && sessionInfo?.webId && <ProfilePanel webId={sessionInfo.webId}/>}
+        {(!sessionInfo?.isLoggedIn || !sessionInfo?.webId) && 
+          <DialogContent className="settings-dialog-container">
+            Please log in to set your preferences and user details.
+          </DialogContent>
+        }
     </Dialog>
   );
 }

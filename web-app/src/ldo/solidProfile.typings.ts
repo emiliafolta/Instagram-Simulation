@@ -13,6 +13,16 @@ export interface SolidProfileShape {
   "@id"?: string;
   "@context"?: ContextDefinition;
   /**
+   * Defines the node as a Person (from foaf)
+   */
+  type: {
+    "@id": "Person";
+  };
+  /**
+   * Define a person's name.
+   */
+  name?: string;
+  /**
    * User's username which is the Solid webID
    */
   username: string;
@@ -68,7 +78,6 @@ export interface SolidProfileShape {
 export interface Category {
   "@id"?: string;
   "@context"?: ContextDefinition;
-  categoryName: string;
 }
 
 /**

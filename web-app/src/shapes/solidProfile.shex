@@ -1,10 +1,15 @@
 PREFIX : <https://shaperepo.com/schemas/solidProfile#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX sp: <http://www.w3.org/ns/pim/space#>
 PREFIX solid: <http://www.w3.org/ns/solid/terms#>
 
-:SolidProfileShape {
+:SolidProfileShape EXTRA a {
+  a [ foaf:Person ]
+    // rdfs:comment  "Defines the node as a Person (from foaf)" ;
+  foaf:name xsd:string ?
+    // rdfs:comment  "Define a person's name." ;
   :username xsd:string 
     // rdfs:comment "User's username which is the Solid webID" ;
   :location xsd:string ? 

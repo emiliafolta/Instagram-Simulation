@@ -1,24 +1,19 @@
 import { Box, IconButton } from "@mui/material"
 import "./HomePage.css"
-import { useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import SettingsDialog from "./SettingsDialog";
 // import icons
 import MenuIcon from '@mui/icons-material/Menu';
-import { useSolidAuth } from "@ldo/solid-react";
-import LoginPopover from "./Popover";
+import LoginPopover from "./LoginPopover";
+import { ISessionInfo } from "@inrupt/solid-client-authn-browser";
 
-
-const Header = () => {
-  const { session, login, logout } = useSolidAuth();
+const Header: FunctionComponent<{
+  sessionInfo?: ISessionInfo
+}> = ({ sessionInfo }) => {
 
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false)
 
   const handleSettingsDialogClose = () => {
-    setSettingsDialogOpen(false)
-  }
-
-  const handleLoginDialogClose = () => {
     setSettingsDialogOpen(false)
   }
 
@@ -28,7 +23,7 @@ const Header = () => {
         <IconButton aria-label="settings" onClick={() => {setSettingsDialogOpen(true)}}>
             <MenuIcon className="homePageMenuButton" />
         </IconButton>
-        <SettingsDialog open={settingsDialogOpen} onClose={handleSettingsDialogClose} />
+        <SettingsDialog open={settingsDialogOpen} onClose={handleSettingsDialogClose} sessionInfo={sessionInfo}/>
         <LoginPopover/>
       </Box>     
     </header>

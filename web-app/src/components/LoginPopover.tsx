@@ -4,12 +4,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { IconButton } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import "./Popover.css"
+import "./LoginPopover.css"
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { FunctionComponent } from "react";
 import { useResource, useSolidAuth, useSubject } from "@ldo/solid-react";
-import { SolidProfileShapeShapeType } from "../.ldo/solidProfile.shapeTypes";
+import { SolidProfileShapeShapeType } from '../ldo/solidProfile.shapeTypes';
+import { useEffect, useState } from 'react';
+
 
 export default function LoginPopover() {
   // Session 
@@ -17,17 +18,26 @@ export default function LoginPopover() {
   const webIdResource = useResource(session.webId);
   const profile = useSubject(SolidProfileShapeShapeType, session.webId);
 
-  const loggedInName = webIdResource?.isReading()
+  const initialName = webIdResource?.isReading()
     ? "LOADING..."
-    : profile?.username
-    ? profile.username
+    : profile?.name
+    ? profile.name
     : session.webId;
+
+  const [loggedInName, setLoggedInName] = useState<string>(initialName ? initialName : "");  
 
   // Popover
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    console.log("event!")
+    const newName = webIdResource?.isReading()
+        ? "LOADING..."
+        : profile?.name
+        ? profile.name
+        : session.webId
+    if(newName) {console.log("setting new name"); setLoggedInName(newName);}
   };
 
   const handleClose = () => {
@@ -54,7 +64,7 @@ export default function LoginPopover() {
                 <Typography className='loginPopover'>
                     <Typography className='loginMessage'> 
                         <div>You are logged in as:</div>
-                        <div>{loggedInName}.{" "}</div>  
+                        <div>{loggedInName}.{" "}</div>
                     </Typography>
                     <Button className='loginButton' onClick={logout}>
                         <Typography>Log Out</Typography>
