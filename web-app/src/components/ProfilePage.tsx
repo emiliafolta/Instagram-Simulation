@@ -1,5 +1,5 @@
 import { Typography, OutlinedInput, Button, Box, IconButton } from "@mui/material"
-import { ICategory, IMediaType, IPost, IUser } from "./common";
+import { IUser } from "./common";
 import Post from "./Post";
 import "./HomePage.css"
 import { useState } from "react";

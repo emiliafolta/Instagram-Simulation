@@ -31,7 +31,6 @@ export default function LoginPopover() {
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    console.log("event!")
     const newName = webIdResource?.isReading()
         ? "LOADING..."
         : profile?.name

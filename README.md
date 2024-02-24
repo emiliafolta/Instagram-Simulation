@@ -44,6 +44,8 @@ Then activate the virtual environment using:
 venv/bin/activate
 
 And finally run the flask using:
-
+venv/bin/flask run
+OR
+python api.py
 
 

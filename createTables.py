@@ -9,12 +9,12 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
-drop_posts_table = "DROP TABLE Posts"
-drop_categories_table = "DROP TABLE Categories"
+# drop_posts_table = "DROP TABLE Posts"
+# drop_categories_table = "DROP TABLE Categories"
 
 # Drop tables (in the right order)
-cursor.execute(drop_posts_table)
-cursor.execute(drop_categories_table)
+# cursor.execute(drop_posts_table)
+# cursor.execute(drop_categories_table)
 
 create_categories_table = """CREATE TABLE Categories (
     id int NOT NULL,

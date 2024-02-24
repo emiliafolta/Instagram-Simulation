@@ -8,26 +8,20 @@ export interface IFeed {
     posts: IPost[]
 }
 
-export interface ICategory {
-    id: number,
-    name: string,
-    image: string, // assuming URL to image is provided
-}
-
 export interface IPost {
     id: number,
-    category: ICategory,
+    category: string,
     caption: string,
     like_count: number,
     media_type: IMediaType,
-    media_name: string, 
+    media_url: string, 
     location: string,    
 }
 
 export enum IMediaType {
-    IMAGE=0,
-    CAROUSEL_ALBUM=1,
-    VIDEO=2,
+    IMAGE="IMAGE",
+    CAROUSEL_ALBUM="CAROUSEL_ALBUM",
+    VIDEO="VIDEO",
 }
 
 export enum Page {

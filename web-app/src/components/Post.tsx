@@ -1,7 +1,7 @@
 import {FC, useState} from "react";
 import "./Post.css"
-import {Box, IconButton, Typography} from "@mui/material";
-import { IPost } from "./common";
+import {Box, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography} from "@mui/material";
+import { IPost, IMediaType } from "./common";
 
 // import icons for like/dislike buttons
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -10,28 +10,48 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import Avatar from '@mui/material/Avatar';
 
-const Post: FC<IPost> = ({id, category, media_type, media_name, caption}) => {
+const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_url, location}) => {
 
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
+    console.log(media_type)
 
     return(
-        <Box className="postContainer">
-            <Box className="postCategory">
-                <Avatar sx={{ bgcolor: "purple" }} className="postCategoryAvatar">{category.name.charAt(0)}</Avatar>
-                <Typography>{category.name}</Typography>
-            </Box>
-            <img src={media_name} className="postMedia"/>
-            <Box className="postButtons">
+        <Card className="postContainer">
+            <CardHeader
+                className="postCategory"
+                avatar={
+                    <Avatar sx={{ bgcolor: "purple" }} className="postCategoryAvatar" >
+                        {category.charAt(0)}
+                    </Avatar>}
+                title={category}
+            />
+            {(media_type == IMediaType.VIDEO) ?
+            <CardMedia
+                component='video'
+                className='postMedia'
+                image={media_url}
+                autoPlay
+                muted={true}
+            /> : 
+            <CardMedia
+                component='img'
+                className='postMedia'
+                image={media_url}
+            />
+            }
+            <CardContent>
+                <Typography className="postCaption">{caption}</Typography>
+            </CardContent>
+            <CardActions>
                 <IconButton className="postLikeButton" aria-label="like" onClick={() => {setLiked(!liked)}}>
                     {liked ? <FavoriteIcon className="postButton" /> : <FavoriteBorderIcon className="postButton"/>}
                 </IconButton>
                 <IconButton aria-label="dislike" onClick={() => {setDisliked(!disliked)}}>
                     {disliked ? <ThumbDownAltIcon className="postButton"/> : <ThumbDownOffAltIcon className="postButton"/>}
                 </IconButton>
-            </Box>
-            <Typography className="postCaption">{caption}</Typography>
-        </Box>
+            </CardActions>
+        </Card>
     );
 }
 

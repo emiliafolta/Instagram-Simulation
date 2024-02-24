@@ -75,7 +75,7 @@ categories_age = {
 }
 
 # change category index to upload the category
-current_category_index = 0
+current_category_index = 13
 current_category_name = categories[current_category_index]
 
 # Insert the current category into categories table
@@ -87,15 +87,18 @@ category_to_insert = {
     "age_group": categories_age[current_category_name],
 }
 
-insertIntoTable("categories", category_to_insert.keys(), category_to_insert.values())
+# comment out if a category is already inserted
+# insertIntoTable("categories", category_to_insert.keys(), category_to_insert.values())
 
 # keys of the post from data
 # note (we will save "media_name" not "media_url" in the table)
 post_keys = ["id", "caption", "like_count", "media_type", "media_url", "category_id", "location"]
 # change these settings for each account
 post_location = None
+
 # file counter to save each post media in a separate file
-file_counter = 0
+# file counter should go up 25 after each account is added
+file_counter = 1125
 
 # Open the data file with explicit encoding (utf-8) and load the JSON data
 with open(json_filename, 'r', encoding='utf-8') as file:
@@ -108,11 +111,14 @@ with open(json_filename, 'r', encoding='utf-8') as file:
     for post in posts:
         # create a dictionary to store post attributes and their values
         post_dict = {}
+        insert_post = False
         # iterate over possible post attributes and save them to the dict if exist in data
         for key in post_keys:
             if key in post.keys():
                 # special case for storing media
                 if key=='media_url':
+                    # only insert posts if they have media to display
+                    insert_post = True
                     # get media properties
                     media_url = post["media_url"]
                     media_type = post["media_type"]
@@ -134,7 +140,8 @@ with open(json_filename, 'r', encoding='utf-8') as file:
         # add the fixed fields (category_id and post location)
         post_dict["category_id"] = current_category_index
         post_dict["location"] = post_location
-        insertIntoTable("posts", post_dict.keys(), post_dict.values())
+        if(insert_post):
+            insertIntoTable("posts", post_dict.keys(), post_dict.values())
 
 db.commit()
 

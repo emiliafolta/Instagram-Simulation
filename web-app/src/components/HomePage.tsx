@@ -12,12 +12,12 @@ import {
 import { useEffect, useState } from "react";
 
 const HomePage = () => {
-  useEffect(() => {
-    console.log("fetching time")
-    fetch(config.BACKEND_BASE_URL + "/time").then(res => res.json()).then(data => {
-      console.log(data)
-    });
-  }, []);
+  // useEffect(() => {
+  //   console.log("fetching time")
+  //   fetch(config.BACKEND_BASE_URL + "/time").then(res => res.json()).then(data => {
+  //     console.log(data)
+  //   });
+  // }, []);
   
   const [sessionInfo, setSessionInfo] = useState<ISessionInfo | undefined>();
   useEffect(() => {
