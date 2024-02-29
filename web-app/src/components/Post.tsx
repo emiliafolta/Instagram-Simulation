@@ -1,7 +1,7 @@
 import {FC, useState} from "react";
 import "./Post.css"
 import {Box, Card, CardActions, CardContent, CardHeader, CardMedia, IconButton, Typography} from "@mui/material";
-import { IPost, IMediaType } from "./common";
+import { IPost, MediaType } from "./common";
 
 // import icons for like/dislike buttons
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -14,10 +14,9 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
 
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
-    console.log(media_type)
 
     return(
-        <Card className="postContainer">
+        <Card className="postContainer" key={id}>
             <CardHeader
                 className="postCategory"
                 avatar={
@@ -26,7 +25,7 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
                     </Avatar>}
                 title={category}
             />
-            {(media_type == IMediaType.VIDEO) ?
+            {(media_type == MediaType.VIDEO) ?
             <CardMedia
                 component='video'
                 className='postMedia'

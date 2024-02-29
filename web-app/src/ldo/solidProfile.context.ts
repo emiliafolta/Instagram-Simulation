@@ -14,8 +14,8 @@ export const solidProfileContext: ContextDefinition = {
     "@id": "http://xmlns.com/foaf/0.1/name",
     "@type": "http://www.w3.org/2001/XMLSchema#string",
   },
-  username: {
-    "@id": "https://shaperepo.com/schemas/solidProfile#username",
+  webId: {
+    "@id": "https://shaperepo.com/schemas/solidProfile#web_id",
     "@type": "http://www.w3.org/2001/XMLSchema#string",
   },
   location: {
@@ -28,15 +28,11 @@ export const solidProfileContext: ContextDefinition = {
   },
   gender: {
     "@id": "https://shaperepo.com/schemas/solidProfile#gender",
-    "@type": "http://www.w3.org/2001/XMLSchema#string",
+    "@type": "http://www.w3.org/2001/XMLSchema#integer",
   },
-  categories: {
-    "@id": "https://shaperepo.com/schemas/solidProfile#categories",
-    "@type": "@id",
-    "@container": "@set",
-  },
-  categoryName: {
-    "@id": "https://shaperepo.com/schemas/solidProfile#category_name",
+  userSelectedCategories: {
+    "@id":
+      "https://shaperepo.com/schemas/solidProfile#user_selected_categories",
     "@type": "http://www.w3.org/2001/XMLSchema#string",
     "@container": "@set",
   },
@@ -44,6 +40,10 @@ export const solidProfileContext: ContextDefinition = {
     "@id": "https://shaperepo.com/schemas/solidProfile#liked_categories",
     "@type": "@id",
     "@container": "@set",
+  },
+  categoryName: {
+    "@id": "https://shaperepo.com/schemas/solidProfile#category_name",
+    "@type": "http://www.w3.org/2001/XMLSchema#string",
   },
   likes: {
     "@id": "https://shaperepo.com/schemas/solidProfile#likes",

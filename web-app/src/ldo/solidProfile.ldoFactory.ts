@@ -1,7 +1,6 @@
 import { LdoFactory } from "ldo";
 import {
   SolidProfileShapeShapeType,
-  CategoryShapeType,
   CategoryLikesShapeType,
 } from "./solidProfile.shapeTypes";
 
@@ -17,11 +16,6 @@ import {
 export const SolidProfileShapeFactory = new LdoFactory(
   SolidProfileShapeShapeType
 );
-
-/**
- * Category LdoFactory
- */
-export const CategoryFactory = new LdoFactory(CategoryShapeType);
 
 /**
  * CategoryLikes LdoFactory

@@ -25,7 +25,7 @@ export interface SolidProfileShape {
   /**
    * User's username which is the Solid webID
    */
-  username: string;
+  webId: string;
   /**
    * User's location (optional)
    */
@@ -37,11 +37,11 @@ export interface SolidProfileShape {
   /**
    * User's gender (optional)
    */
-  gender?: string;
+  gender?: number;
   /**
    * A list of categories that the user selected as their interests
    */
-  categories?: Category[];
+  userSelectedCategories?: string[];
   /**
    * A list of categories that the user liked and the number of likes
    */
@@ -70,14 +70,6 @@ export interface SolidProfileShape {
   publicTypeIndex?: {
     "@id": string;
   }[];
-}
-
-/**
- * Category Type
- */
-export interface Category {
-  "@id"?: string;
-  "@context"?: ContextDefinition;
 }
 
 /**

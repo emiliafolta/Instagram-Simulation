@@ -1,5 +1,5 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { IMediaType, IPost } from "./common";
+import { MediaType, IPost } from "./common";
 import React, { useState, useEffect, useRef } from 'react';
 import Post from './Post';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,7 +13,7 @@ const examplePost: IPost = {
     category: "cat0", 
     caption:'caption caption caption',
     like_count: 10,
-    media_type:IMediaType.IMAGE, 
+    media_type:MediaType.IMAGE, 
     media_url:'images/jk-placeholder-image.jpg', 
     location: "Oxford",
 }
@@ -31,6 +31,30 @@ const Feed = () => {
         const data = [examplePost, examplePost, examplePost, examplePost, examplePost];
         resolve(data);
       }, 500); // 1000 milliseconds = 1 second
+    });
+  }
+
+  const dataToSend = {
+    categories: [['fashion', 3], ['sports', 4]],
+    gender: 'male',
+    age: 30,
+    location: 'Oxford',
+    exclude: [13456234, 82354236, 439857948]
+  };
+  
+  async function automaticFetch() {
+    fetch(config.BACKEND_BASE_URL + '/send-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToSend),
+    }).then(response => {
+      // Handle response
+      console.log(response)
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
   }
 
@@ -54,9 +78,29 @@ const Feed = () => {
     try {
       const response = await fetch(config.BACKEND_BASE_URL + "/posts");
       const postData = await response.json();
-      console.log(postData)
       const data : IPost[] = postData.map((post : any[]) => mapArrayToPostObject(post))
-      console.log(data)
+      // console.log(data)
+
+      
+      // const data: IPost[] = await fetch_data();
+  
+      setPosts([...posts, ...data]);
+    } catch (error) {
+      setError(true)
+      console.log(error)
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPosts = async () => {
+    setIsLoading(true);
+    setError(false);
+    try {
+      const response = await fetch(config.BACKEND_BASE_URL + "/posts");
+      const postData = await response.json();
+      const data : IPost[] = postData.map((post : any[]) => mapArrayToPostObject(post))
+      // console.log(data)
 
       
       // const data: IPost[] = await fetch_data();
@@ -75,6 +119,11 @@ const Feed = () => {
     fetchData();
   }, []);
 
+  // use fetchData initially
+  useEffect(() => {
+    automaticFetch();
+  }, []);
+
   if (!session.isLoggedIn) return <div>No blog available. Log in first.</div>;
   else return (
     <div>
@@ -87,6 +136,7 @@ const Feed = () => {
                   <CircularProgress className='circularProgress'/>
               </Box>}
           endMessage={<div>Yay! You have seen it all!</div>}
+          
         >
           {posts.map(post => (
             <Post id={post.id} category={post.category} media_type={post.media_type} media_url={post.media_url} caption={post.caption} like_count={post.like_count} location={post.location} />

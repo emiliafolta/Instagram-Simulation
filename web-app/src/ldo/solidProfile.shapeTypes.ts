@@ -1,11 +1,7 @@
 import { ShapeType } from "ldo";
 import { solidProfileSchema } from "./solidProfile.schema";
 import { solidProfileContext } from "./solidProfile.context";
-import {
-  SolidProfileShape,
-  Category,
-  CategoryLikes,
-} from "./solidProfile.typings";
+import { SolidProfileShape, CategoryLikes } from "./solidProfile.typings";
 
 /**
  * =============================================================================
@@ -19,15 +15,6 @@ import {
 export const SolidProfileShapeShapeType: ShapeType<SolidProfileShape> = {
   schema: solidProfileSchema,
   shape: "https://shaperepo.com/schemas/solidProfile#SolidProfileShape",
-  context: solidProfileContext,
-};
-
-/**
- * Category ShapeType
- */
-export const CategoryShapeType: ShapeType<Category> = {
-  schema: solidProfileSchema,
-  shape: "https://shaperepo.com/schemas/solidProfile#Category",
   context: solidProfileContext,
 };
 

@@ -13,17 +13,14 @@ class Post(NamedTuple):
     media_type: str
     media_name: str
     location: str 
-    
-    def to_dict(self) -> Dict[str, any]:
-        return {
-            'id': self.id,
-            'category_name': self.category_name,
-            'caption': self.caption,
-            'like_count': self.like_count,
-            'media_type': self.media_type,
-            'media_name': self.media_name,
-            'location': self.location
-        }
+
+class Category(NamedTuple):
+    id: int
+    name: str
+    profile_picture_url: str
+    gender: int
+    age_group: str
+
 
 db = mysql.connector.connect(
     host="localhost",
@@ -34,21 +31,36 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
-def get_data():
+# get posts from the db (all available)
+def get_data_from_db():
     query = "SELECT p.id, c.name, p.caption, p.like_count, p.media_type, p.media_name, p.location  FROM posts p, categories c WHERE p.category_id = c.id"
     cursor.execute(query)
     db_result = cursor.fetchall()
     result = [ Post(*tuple) for tuple in db_result ]
-    print(result)
+    return result
+
+# get categories from the db
+def get_categories_from_db():
+    query = "SELECT c.name FROM categories c"
+    cursor.execute(query)
+    result = cursor.fetchall()
     return result
 
 # get random n posts from the posts table
-def get_random(n: int):
-    query = f"SELECT p.id, c.name, p.caption, p.like_count, p.media_type, p.media_name, p.location  FROM posts p, categories c WHERE p.category_id = c.id ORDER BY RAND() LIMIT {n}"
+def get_random_posts_from_db(count: int):
+    query = f"SELECT p.id, c.name, p.caption, p.like_count, p.media_type, p.media_name, p.location  FROM posts p, categories c WHERE p.category_id = c.id ORDER BY RAND() LIMIT {count}"
     cursor.execute(query)
     db_result = cursor.fetchall()
     result = [ Post(*tuple) for tuple in db_result ]
-    print(result)
+    return result
+
+# get posts from the db (all available)
+def get_posts_from_categories(category: str, count: int):
+    # TODO: add input sanitisation
+    query = f"SELECT p.id, c.name, p.caption, p.like_count, p.media_type, p.media_name, p.location  FROM posts p, categories c WHERE p.category_id = c.id AND c.name = {category} LIMIT {count}"
+    cursor.execute(query)
+    db_result = cursor.fetchall()
+    result = [ Post(*tuple) for tuple in db_result ]
     return result
 
 

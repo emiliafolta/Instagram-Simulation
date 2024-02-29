@@ -52,7 +52,7 @@ export const solidProfileSchema: Schema = {
           },
           {
             type: "TripleConstraint",
-            predicate: "https://shaperepo.com/schemas/solidProfile#username",
+            predicate: "https://shaperepo.com/schemas/solidProfile#web_id",
             valueExpr: {
               type: "NodeConstraint",
               datatype: "http://www.w3.org/2001/XMLSchema#string",
@@ -110,7 +110,7 @@ export const solidProfileSchema: Schema = {
             predicate: "https://shaperepo.com/schemas/solidProfile#gender",
             valueExpr: {
               type: "NodeConstraint",
-              datatype: "http://www.w3.org/2001/XMLSchema#string",
+              datatype: "http://www.w3.org/2001/XMLSchema#integer",
             },
             min: 0,
             max: 1,
@@ -126,8 +126,12 @@ export const solidProfileSchema: Schema = {
           },
           {
             type: "TripleConstraint",
-            predicate: "https://shaperepo.com/schemas/solidProfile#categories",
-            valueExpr: "https://shaperepo.com/schemas/solidProfile#Category",
+            predicate:
+              "https://shaperepo.com/schemas/solidProfile#user_selected_categories",
+            valueExpr: {
+              type: "NodeConstraint",
+              datatype: "http://www.w3.org/2001/XMLSchema#string",
+            },
             min: 0,
             max: -1,
             annotations: [
@@ -242,18 +246,6 @@ export const solidProfileSchema: Schema = {
         ],
       },
       extra: ["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"],
-    },
-    {
-      id: "https://shaperepo.com/schemas/solidProfile#Category",
-      type: "Shape",
-      expression: {
-        type: "TripleConstraint",
-        predicate: "https://shaperepo.com/schemas/solidProfile#category_name",
-        valueExpr: {
-          type: "NodeConstraint",
-          datatype: "http://www.w3.org/2001/XMLSchema#string",
-        },
-      },
     },
     {
       id: "https://shaperepo.com/schemas/solidProfile#CategoryLikes",

@@ -1,8 +1,8 @@
 import os
 import time
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
-from get_data import get_data, get_random
+from get_data import get_categories_from_db, get_posts_from_categories, get_random_posts_from_db
 import subprocess
 import signal
 import time
@@ -20,8 +20,69 @@ def get_current_time():
 
 @app.route('/posts')
 def get_posts():
-    res = get_random(10)
+    res = get_random_posts_from_db(10)
     return res
+
+@app.route('/categories')
+def get_categories():
+    res = get_categories_from_db()
+    return res
+
+# Endpoint to get <count> of posts from <category>
+# Json we expect to be sent (each field is optional)
+# { 
+#     categories: [[category_name, overall_likes, likes_in_last_scroll], ['fashion', 3, 2], ['sports', 4, 0]],
+#     gender: 0,
+#     age: 30,
+#     location: 'Oxford',
+#     exclude: [13456234, 82354236, 439857948]
+# }
+@app.route('/posts_from_categories', methods=['POST'])
+def get_posts_from_categories(category, count):
+    data = request.json  # This should contain the json
+
+    # dictionary that we will evaluate category scores in
+    category_scores = {}
+    if 'categories' in data:
+        add_category_scores(data['categories'], category_scores)
+
+    if 'gender' in data:
+        add_gender_scores(data['gender'], category_scores)
+    
+    if 'age' in data:
+        add_age_scores(data['age'], category_scores)
+
+    location = None
+    if 'location' in data:
+        location = data['location']
+    
+    exclude = []
+    if 'exclude' in data:
+        exclude = data['exclude']
+
+    # [[category, number of posts], ['fashion', 3], ['sports', 4]],
+    category_proportion = calculate_category_proportion(category_scores, location, count)
+    
+
+    res = get_posts_from_db(category_scores, location, exclude)
+    return res
+
+@app.route('/send-data', methods=['POST'])
+def receive_data():
+    received_data = request.json  # This should contain your array of tuples
+
+    # Assuming data is in the format {'data': [['string1', 123], ['string2', 456]]}
+    # received_data = data['data']
+    print(received_data)
+
+    # Process received_data as needed
+    for item in received_data:
+        string_value = item[0]
+        number_value = item[1]
+        # Do something with string_value and number_value
+        
+    # Optionally, you can send a response back to the frontend
+    return jsonify({'message': 'Data received successfully'})
 
 # Endpoint to serve images
 @app.route('/images/<path:filename>')

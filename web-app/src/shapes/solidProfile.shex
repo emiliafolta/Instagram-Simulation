@@ -10,15 +10,15 @@ PREFIX solid: <http://www.w3.org/ns/solid/terms#>
     // rdfs:comment  "Defines the node as a Person (from foaf)" ;
   foaf:name xsd:string ?
     // rdfs:comment  "Define a person's name." ;
-  :username xsd:string 
+  :web_id xsd:string 
     // rdfs:comment "User's username which is the Solid webID" ;
   :location xsd:string ? 
     // rdfs:comment "User's location (optional)" ;
   :age xsd:integer ? 
     // rdfs:comment "User's age (optional)" ;
-  :gender xsd:string ? 
+  :gender xsd:integer ? 
     // rdfs:comment "User's gender (optional)" ;
-  :categories @:Category * 
+  :user_selected_categories xsd:string * 
     // rdfs:comment "A list of categories that the user selected as their interests" ;
   :liked_categories @:CategoryLikes * 
     // rdfs:comment "A list of categories that the user liked and the number of likes" ;
@@ -30,10 +30,6 @@ PREFIX solid: <http://www.w3.org/ns/solid/terms#>
     // rdfs:comment  "A registry of all types used on the user's Pod (for private access only)" ;
   solid:publicTypeIndex IRI *
     // rdfs:comment  "A registry of all types used on the user's Pod (for public access)" ;
-}
-
-:Category {
-  :category_name xsd:string ;
 }
 
 :CategoryLikes {
