@@ -4,17 +4,39 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { IconButton } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useSolidAuth } from "@ldo/solid-react";
-import "./Popover.css"
+import "./LoginPopover.css"
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useResource, useSolidAuth, useSubject } from "@ldo/solid-react";
+import { SolidProfileShapeShapeType } from '../ldo/solidProfile.shapeTypes';
+import { useEffect, useState } from 'react';
+
 
 export default function LoginPopover() {
+  // Session 
   const { session, login, logout } = useSolidAuth();
+  const webIdResource = useResource(session.webId);
+  const profile = useSubject(SolidProfileShapeShapeType, session.webId);
+
+  const initialName = webIdResource?.isReading()
+    ? "LOADING..."
+    : profile?.name
+    ? profile.name
+    : session.webId;
+
+  const [loggedInName, setLoggedInName] = useState<string>(initialName ? initialName : "");  
+
+  // Popover
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    const newName = webIdResource?.isReading()
+        ? "LOADING..."
+        : profile?.name
+        ? profile.name
+        : session.webId
+    if(newName) {console.log("setting new name"); setLoggedInName(newName);}
   };
 
   const handleClose = () => {
@@ -40,8 +62,8 @@ export default function LoginPopover() {
             {session.isLoggedIn ? (
                 <Typography className='loginPopover'>
                     <Typography className='loginMessage'> 
-                        <div>You are logged in with the webId:</div>
-                        <div>{session.webId}.{" "}</div>  
+                        <div>You are logged in as:</div>
+                        <div>{loggedInName}.{" "}</div>
                     </Typography>
                     <Button className='loginButton' onClick={logout}>
                         <Typography>Log Out</Typography>

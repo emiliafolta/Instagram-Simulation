@@ -13,6 +13,14 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
+# Helper function to insert into given sql table
+def insertIntoTable(table_name, column_names, values):
+    # print(table_name, column_names, values)
+    columns = ','.join(column_names)
+    temp_values = ', '.join(['%s' for _ in column_names])
+    query = f'INSERT INTO {table_name} ({columns}) VALUES ({temp_values})'
+    cursor.execute(query, tuple(values))
+
 # Specify the file with data to store
 json_filename = 'data.json'
 
@@ -66,29 +74,31 @@ categories_age = {
     "technology and programming": "12-27",
 }
 
-current_category_index = 0
+# change category index to upload the category
+current_category_index = 13
 current_category_name = categories[current_category_index]
-file_counter = 0
-location = 'Oxford'
-add_location = False
-
-# SQL tables columns to insert
-categories_keys = ["id", "name", "profile_picture_url", "gender", "age_group"]
-post_keys = ["id", "caption", "like_count", "media_type", "media_name", "category_id", "location"]
-
-
-
-# Helper function to insert into given sql table
-def insertIntoTable(table_name, column_names, values):
-    # print(table_name, column_names, values)
-    columns = ','.join(column_names)
-    temp_values = ', '.join(['%s' for _ in column_names])
-    query = f'INSERT INTO {table_name} ({columns}) VALUES ({temp_values})'
-    cursor.execute(query, tuple(values))
 
 # Insert the current category into categories table
-categories_values = [current_category_index, current_category_name, None, categories_gender[current_category_name], categories_age[current_category_name]]
-insertIntoTable("categories", categories_keys, categories_values)
+category_to_insert = {
+    "id": current_category_index,
+    "name": current_category_name,
+    "profile_picture_url": None,
+    "gender": categories_gender[current_category_name],
+    "age_group": categories_age[current_category_name],
+}
+
+# comment out if a category is already inserted
+# insertIntoTable("categories", category_to_insert.keys(), category_to_insert.values())
+
+# keys of the post from data
+# note (we will save "media_name" not "media_url" in the table)
+post_keys = ["id", "caption", "like_count", "media_type", "media_url", "category_id", "location"]
+# change these settings for each account
+post_location = None
+
+# file counter to save each post media in a separate file
+# file counter should go up 25 after each account is added
+file_counter = 1125
 
 # Open the data file with explicit encoding (utf-8) and load the JSON data
 with open(json_filename, 'r', encoding='utf-8') as file:
@@ -99,13 +109,16 @@ with open(json_filename, 'r', encoding='utf-8') as file:
     posts = business_discovery["media"]["data"]
     # iterate over each post from the account
     for post in posts:
-        # initialise the values array
-        post_values = []
-        # get the value for each key in the right order
+        # create a dictionary to store post attributes and their values
+        post_dict = {}
+        insert_post = False
+        # iterate over possible post attributes and save them to the dict if exist in data
         for key in post_keys:
             if key in post.keys():
-                # special case for media
-                if key=='media_name':
+                # special case for storing media
+                if key=='media_url':
+                    # only insert posts if they have media to display
+                    insert_post = True
                     # get media properties
                     media_url = post["media_url"]
                     media_type = post["media_type"]
@@ -119,17 +132,16 @@ with open(json_filename, 'r', encoding='utf-8') as file:
                     os.remove(f"media/{file_name}")
                     # add the name of the media to the posts table
                     # the file can be downloaded from onedrive:Instagram media/<file_name>
-                    post_values.append(file_name)
+                    post_dict["media_name"] = file_name
                 else:
-                    # if not media simply add to sql
-                    post_values.append(post[key])
+                    post_dict[key] = post[key]
             else:
-                post_values.append(None)
-        # add the fixed fields (category_id and location optionally)
-        post_values[-2] = current_category_index
-        if add_location:
-            post_values[-1] = location
-        insertIntoTable("post", post_keys, post_values)
+                post_dict[key] = None
+        # add the fixed fields (category_id and post location)
+        post_dict["category_id"] = current_category_index
+        post_dict["location"] = post_location
+        if(insert_post):
+            insertIntoTable("posts", post_dict.keys(), post_dict.values())
 
 db.commit()
 

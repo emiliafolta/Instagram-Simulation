@@ -1,3 +1,5 @@
+import { CategoryLikes } from "../ldo/solidProfile.typings";
+
 export interface IUser {
     id: number,
     name: string,
@@ -8,24 +10,36 @@ export interface IFeed {
     posts: IPost[]
 }
 
-export interface ICategory {
-    id: number,
-    name: string,
-    image: string, // assuming URL to image is provided
-}
-
 export interface IPost {
     id: number,
-    category: ICategory,
-    media_type: IMediaType,
-    media_url: string, // assuming URL to media is provided
+    category: string,
     caption: string,
+    like_count: number,
+    media_type: MediaType,
+    media_url: string, 
+    location: string,    
 }
 
-export enum IMediaType {
-    IMAGE=0,
-    CAROUSEL_ALBUM=1,
-    VIDEO=2,
+export interface IUserProfile {
+    webid?: number,
+    selectedCategories?: string[],
+    likedCategories?: CategoryLikes[],
+    gender?: UserGender,
+    age?: string,
+    location?: string,  
+}
+
+export enum MediaType {
+    IMAGE="IMAGE",
+    CAROUSEL_ALBUM="CAROUSEL_ALBUM",
+    VIDEO="VIDEO",
+}
+
+export enum UserGender {
+    MALE=0,
+    FEMALE=1,
+    OTHER=2,
+    NOT_SPECIFIED=3,
 }
 
 export enum Page {

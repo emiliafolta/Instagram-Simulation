@@ -10,7 +10,7 @@ export default function App () {
       <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />}/>
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />} /> {/* currently not used */}
           </Routes>
         </BrowserRouter>
       </BrowserSolidLdoProvider>
