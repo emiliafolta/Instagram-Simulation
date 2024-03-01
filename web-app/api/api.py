@@ -2,10 +2,11 @@ import os
 import time
 from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
-from get_data import get_categories_from_db, get_posts_from_categories, get_random_posts_from_db
+from get_data import get_categories_from_db, get_posts_from_categories, get_random_posts_from_db, get_posts_from_db
 import subprocess
-import signal
 import time
+from algo import add_category_scores, add_age_scores, add_gender_scores, calculate_categories_proportions
+from config import post_count
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ def get_categories():
     res = get_categories_from_db()
     return res
 
-# Endpoint to get <count> of posts from <category>
+# Endpoint to get posts from categories based on the user interaction
 # Json we expect to be sent (each field is optional)
 # { 
 #     categories: [[category_name, overall_likes, likes_in_last_scroll], ['fashion', 3, 2], ['sports', 4, 0]],
@@ -38,8 +39,8 @@ def get_categories():
 #     exclude: [13456234, 82354236, 439857948]
 # }
 @app.route('/posts_from_categories', methods=['POST'])
-def get_posts_from_categories(category, count):
-    data = request.json  # This should contain the json
+def get_posts_from_categories():
+    data = request.json  # This should contain the json of the shape as above
 
     # dictionary that we will evaluate category scores in
     category_scores = {}
@@ -60,11 +61,11 @@ def get_posts_from_categories(category, count):
     if 'exclude' in data:
         exclude = data['exclude']
 
-    # [[category, number of posts], ['fashion', 3], ['sports', 4]],
-    category_proportion = calculate_category_proportion(category_scores, location, count)
-    
+    # category_proportions: {'category': number_of_posts, 'fashion': 3, 'sports': 4, ...}
+    category_proportions = calculate_categories_proportions(category_scores)
+    print(category_proportions)
 
-    res = get_posts_from_db(category_scores, location, exclude)
+    res = get_posts_from_db(category_proportions, exclude, location)
     return res
 
 @app.route('/send-data', methods=['POST'])
