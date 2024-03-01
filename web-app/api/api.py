@@ -9,6 +9,7 @@ from algo import add_category_scores, add_age_scores, add_gender_scores, calcula
 from config import post_count
 
 app = Flask(__name__)
+# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 CORS(app)
 

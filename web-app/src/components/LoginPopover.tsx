@@ -9,41 +9,42 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useResource, useSolidAuth, useSubject } from "@ldo/solid-react";
 import { SolidProfileShapeShapeType } from '../ldo/solidProfile.shapeTypes';
-import { useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
+import { IUserProfile } from './common';
 
 
-export default function LoginPopover() {
-  // Session 
+const LoginPopover: FunctionComponent<{ 
+    userProfile: IUserProfile,
+    setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
+  }> = ({ userProfile, setUserProfile }) => {
+
+  // Session information
   const { session, login, logout } = useSolidAuth();
   const webIdResource = useResource(session.webId);
-  const profile = useSubject(SolidProfileShapeShapeType, session.webId);
-
-  const initialName = webIdResource?.isReading()
-    ? "LOADING..."
-    : profile?.name
-    ? profile.name
-    : session.webId;
-
-  const [loggedInName, setLoggedInName] = useState<string>(initialName ? initialName : "");  
+  const profile = useSubject(SolidProfileShapeShapeType, session.webId);    
 
   // Popover
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    const newName = webIdResource?.isReading()
-        ? "LOADING..."
-        : profile?.name
-        ? profile.name
-        : session.webId
-    if(newName) {console.log("setting new name"); setLoggedInName(newName);}
+    // set the user profile name 
+    const profileName = webIdResource?.isReading()
+    ? "LOADING..."
+    : profile?.name
+    ? profile.name
+    : session.webId
+
+    setUserProfile({
+        ...userProfile,
+        name: profileName
+    })
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const open = Boolean(anchorEl);
 
   return (
     <div>
@@ -63,7 +64,7 @@ export default function LoginPopover() {
                 <Typography className='loginPopover'>
                     <Typography className='loginMessage'> 
                         <div>You are logged in as:</div>
-                        <div>{loggedInName}.{" "}</div>
+                        <div>{userProfile.name}</div>
                     </Typography>
                     <Button className='loginButton' onClick={logout}>
                         <Typography>Log Out</Typography>
@@ -94,3 +95,5 @@ export default function LoginPopover() {
     </div>
   );
 }
+
+export default LoginPopover;

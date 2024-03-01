@@ -1,38 +1,27 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MediaType, IPost } from "./common";
-import React, { useState, useEffect, useRef } from 'react';
+import { MediaType, IPost, IUserProfile, CategoryMomentum } from "./common";
+import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
 import Post from './Post';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
 import "./Feed.css";
 import { useSolidAuth } from "@ldo/solid-react";
-import config from "./config"
+import config from "./config";
+import { LinkedDataObject } from "ldo";
+import { SolidProfileShape } from "../ldo/solidProfile.typings";
+import { SolidProfileShapeFactory } from "../ldo/solidProfile.ldoFactory";
+import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
 
-const examplePost: IPost = {
-    id:0, 
-    category: "cat0", 
-    caption:'caption caption caption',
-    like_count: 10,
-    media_type:MediaType.IMAGE, 
-    media_url:'images/jk-placeholder-image.jpg', 
-    location: "Oxford",
-}
-
-const Feed = () => {
+const Feed: FunctionComponent<{
+  userProfile: IUserProfile,
+  setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
+}> = ({ userProfile, setUserProfile}) => {
+  
   const { session } = useSolidAuth();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  async function fetch_data() : Promise<IPost[]> {
-    return new Promise((resolve) => {
-      // Simulate an asynchronous operation (e.g., fetching data from an API)
-      setTimeout(() => {
-        const data = [examplePost, examplePost, examplePost, examplePost, examplePost];
-        resolve(data);
-      }, 500); // 1000 milliseconds = 1 second
-    });
-  }
+  
 
   const dataToSend = {
     categories: [['fashion', 3], ['sports', 4]],
@@ -74,15 +63,10 @@ const Feed = () => {
   const fetchData = async () => {
     setIsLoading(true);
     setError(false);
-  
     try {
       const response = await fetch(config.BACKEND_BASE_URL + "/posts");
       const postData = await response.json();
       const data : IPost[] = postData.map((post : any[]) => mapArrayToPostObject(post))
-      // console.log(data)
-
-      
-      // const data: IPost[] = await fetch_data();
   
       setPosts([...posts, ...data]);
     } catch (error) {
@@ -93,36 +77,97 @@ const Feed = () => {
     }
   };
 
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    setError(false);
-    try {
-      const response = await fetch(config.BACKEND_BASE_URL + "/posts");
-      const postData = await response.json();
-      const data : IPost[] = postData.map((post : any[]) => mapArrayToPostObject(post))
-      // console.log(data)
-
-      
-      // const data: IPost[] = await fetch_data();
-  
-      setPosts([...posts, ...data]);
-    } catch (error) {
-      setError(true)
-      console.log(error)
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  async function initialiseMomentum() {
+    const initMomentum: CategoryMomentum[] = [];
+    categories.forEach((categoryName: string) => {
+      const newMomentum = {categoryName: categoryName, momentum: 0};
+      initMomentum.push(newMomentum);
+    })
+    setUserProfile({
+      ...userProfile,
+      categoryMomentum: initMomentum
+    })
+  }
 
   // use fetchData initially
   useEffect(() => {
+    // // fetch interaction data from solid into userProfile
+    // fetchInteractions().then(()=>{
+    //   // then initialise the momentum in userProfile
+    //   initialiseMomentum().then(()=>{
+    //     // then fetch the post data
+    //     fetchData();
+    //   })
+    // })
     fetchData();
   }, []);
+
+  
+  // fetch the interaction data from solid profile and initialise the momentum array
+  async function fetchInteractions() {
+    const webId = userProfile.webId? userProfile.webId : "";
+    const rawProfile = await (
+      await solid_fetch(webId)
+    ).text();
+    const solidProfile = await SolidProfileShapeFactory.parse(
+      webId,
+      rawProfile,
+      { baseIRI: webId }
+    );
+    setSolidProfile(solidProfile);
+    setUserProfile({
+      ...userProfile,
+      categoryInteractions: solidProfile.likedCategories ? solidProfile.likedCategories : []
+    })
+  }
+
+  // update the solid profile with new data
+  async function updateSolidProfile() {
+    if (solidProfile) {
+      const webId = userProfile.webId? userProfile.webId : "";
+      const modifiedProfile = solidProfile.$clone();
+      modifiedProfile.likedCategories = userProfile.categoryInteractions;
+      const response = await solid_fetch(webId, {
+        method: "PATCH",
+        body: await modifiedProfile.$toSparqlUpdate(),
+        headers: {
+          "Content-Type": "application/sparql-update"
+        }
+      });
+      if (response.status === 200) {
+        setSolidProfile(modifiedProfile);
+      }
+    }
+  }
 
   // use fetchData initially
   useEffect(() => {
     automaticFetch();
   }, []);
+
+  // solid profile to get the existing interaction data from and update it when fetching new data
+  const [solidProfile, setSolidProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
+  const [categories, setCategories] = useState<string[]>([]);
+  
+  // async function fetchCategories() {
+  //   try {
+  //     const response = await fetch(config.BACKEND_BASE_URL + "/categories");
+  //     const categories = await response.json();
+  //     setCategories(categories);
+
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // };
+
+  // // fetch the categories when the app is opened
+  // useEffect(() => { fetchCategories() }, []);
+
+  
+
+  // we will assume each post updates the userProfile interactions and momentum 
+  // on each fetchData we will use the current data in userProfile and upload the interactions to solid profile
+  // we will also clear the momentum which will be on a fetch-based basis
 
   if (!session.isLoggedIn) return <div>No blog available. Log in first.</div>;
   else return (
