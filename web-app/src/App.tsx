@@ -7,7 +7,7 @@ import {
   ISessionInfo
 } from '@inrupt/solid-client-authn-browser';
 import { useEffect, useState } from "react";
-import { CategoryInteractions, IUserProfile, UserGender } from "./components/common";
+import { CategoryInteractions, CategoryMomentum, IUserProfile, UserGender, categoryNames } from "./components/common";
 import config from "./components/config";
 
 const initialUserProfile: IUserProfile = {
@@ -25,15 +25,22 @@ const initialUserProfile: IUserProfile = {
 export default function App () {
 
   const [userProfile, setUserProfile] = useState<IUserProfile>(initialUserProfile);
+
+  useEffect(() => {
+    console.log(userProfile) 
+    const interactions: number[] = []
+    userProfile.categoryInteractions?.forEach(cat =>{interactions.push(cat.likes)})
+    console.log(interactions)
+  }, [userProfile])
+
   useEffect(() => {
     handleIncomingRedirect().then((sessionInfo) => {
       setUserProfile({
         ...userProfile,
         webId: sessionInfo?.webId,
         isLoggedIn: sessionInfo?.isLoggedIn
-      });
-
-    });
+      })
+    })
   }, []);
 
   return (

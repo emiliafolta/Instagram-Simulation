@@ -11,6 +11,7 @@ import {
 } from '@inrupt/solid-client-authn-browser';
 import { FunctionComponent, useEffect, useState } from "react";
 import { IUserProfile } from "./common";
+import FeedWrapper from "./FeedWrapper";
 
 const HomePage: FunctionComponent<{
   userProfile: IUserProfile,
@@ -21,7 +22,7 @@ const HomePage: FunctionComponent<{
     <Box>
       <Header userProfile={userProfile} setUserProfile={setUserProfile}/>
       <Box className="feedContainer">
-        <Feed userProfile={userProfile} setUserProfile={setUserProfile}/>
+        <FeedWrapper userProfile={userProfile} setUserProfile={setUserProfile}/>
       </Box>
     </Box>
     )

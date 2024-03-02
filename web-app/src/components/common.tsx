@@ -17,7 +17,10 @@ export interface IPost {
     like_count: number,
     media_type: MediaType,
     media_url: string, 
-    location: string,    
+    location: string,   
+    userProfile: IUserProfile,
+    setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>, 
+    selected: boolean,
 }
 
 export interface IUserProfile {
@@ -64,3 +67,20 @@ export enum Page {
 export const selectionWeight = 5
 export const likeWeight = 1
 export const dislikeWeight = -1
+
+export const categoryNames = [
+    "mental health and lifestyle", 
+    "beauty and skincare",
+    "fitness and nutrition",
+    "food and cooking",
+    "sports",
+    "movies and TV shows",
+    "arts and music",
+    "fashion",
+    "educational facts and news",
+    "business and career",
+    "books",
+    "games",
+    "photography",
+    "technology and programming"
+]

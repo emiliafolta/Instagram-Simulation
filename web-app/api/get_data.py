@@ -116,7 +116,7 @@ def get_posts_from_db(category_proportions, exclude, location=None, location_cou
     return res
     
 
-get_posts_from_db({'fashion':4, 'sports':3, 'books':12}, [], location="Oxford", location_count=10)
+# get_posts_from_db({'fashion':4, 'sports':3, 'books':12}, [], location="Oxford", location_count=10)
 
 
 

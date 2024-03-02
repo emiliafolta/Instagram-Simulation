@@ -19,6 +19,7 @@ def init_category_scores(category_scores):
     query = "SELECT c.name FROM categories c"
     cursor.execute(query)
     category_names = cursor.fetchall()
+    print(category_names)
     # initialise the categories to have scores 0
     # db result has the shape [[category_name_1], [category_name_2], ...]
     for cat_name in category_names:
@@ -37,7 +38,7 @@ def add_category_scores(categories, category_scores):
         if category_name in category_scores:
             category_scores[category_name] += (overall_likes + momentum)
         else: 
-            print("Error: unknown category name")
+            print("Error: unknown category name: "+category_name)
     
 # add a constant to score of each category matching the given gender
 def add_gender_scores(gender, category_scores):

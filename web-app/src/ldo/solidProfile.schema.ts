@@ -148,7 +148,7 @@ export const solidProfileSchema: Schema = {
           {
             type: "TripleConstraint",
             predicate:
-              "https://shaperepo.com/schemas/solidProfile#liked_categories",
+              "https://shaperepo.com/schemas/solidProfile#category_interactions",
             valueExpr:
               "https://shaperepo.com/schemas/solidProfile#CategoryLikes",
             min: 0,

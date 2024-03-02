@@ -45,7 +45,7 @@ export interface SolidProfileShape {
   /**
    * A list of categories that the user liked and the number of likes
    */
-  likedCategories?: CategoryLikes[];
+  categoryInteractions?: CategoryLikes[];
   /**
    * The location of a Solid storage server related to this WebId
    */

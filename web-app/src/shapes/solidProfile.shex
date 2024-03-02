@@ -20,7 +20,7 @@ PREFIX solid: <http://www.w3.org/ns/solid/terms#>
     // rdfs:comment "User's gender (optional)" ;
   :user_selected_categories xsd:string * 
     // rdfs:comment "A list of categories that the user selected as their interests" ;
-  :liked_categories @:CategoryLikes * 
+  :category_interactions @:CategoryLikes * 
     // rdfs:comment "A list of categories that the user liked and the number of likes" ;
   sp:storage IRI *
     // rdfs:comment  "The location of a Solid storage server related to this WebId" ;

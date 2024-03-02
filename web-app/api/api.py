@@ -5,8 +5,8 @@ from flask_cors import CORS
 from get_data import get_categories_from_db, get_posts_from_categories, get_random_posts_from_db, get_posts_from_db
 import subprocess
 import time
-from algo import add_category_scores, add_age_scores, add_gender_scores, calculate_categories_proportions
-from config import post_count
+from algo import add_category_scores, add_age_scores, add_gender_scores, calculate_categories_proportions, init_category_scores
+from config import random_posts_count
 
 app = Flask(__name__)
 # CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -22,7 +22,7 @@ def get_current_time():
 
 @app.route('/posts')
 def get_posts():
-    res = get_random_posts_from_db(10)
+    res = get_random_posts_from_db(random_posts_count)
     return res
 
 @app.route('/categories')
@@ -43,8 +43,11 @@ def get_categories():
 def get_posts_from_categories():
     data = request.json  # This should contain the json of the shape as above
 
+    print(data)
     # dictionary that we will evaluate category scores in
     category_scores = {}
+    init_category_scores(category_scores)
+    
     if 'categories' in data:
         add_category_scores(data['categories'], category_scores)
 
