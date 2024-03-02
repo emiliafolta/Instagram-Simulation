@@ -78,7 +78,7 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
                     aria-label="like" 
                     onClick={() => {
                         setLiked(!liked);
-                        onCategoryInteraction(category, true);
+                        if(userProfile.allowLearning) onCategoryInteraction(category, true);
                     }}
                 >
                     {liked ? <FavoriteIcon className="postButton" /> : <FavoriteBorderIcon className="postButton"/>}
@@ -87,7 +87,7 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
                     aria-label="dislike" 
                     onClick={() => {
                         setDisliked(!disliked);
-                        onCategoryInteraction(category, false);
+                        if(userProfile.allowLearning) onCategoryInteraction(category, false);
                     }}
                 >
                     {disliked ? <ThumbDownAltIcon className="postButton"/> : <ThumbDownOffAltIcon className="postButton"/>}

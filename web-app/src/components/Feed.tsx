@@ -22,6 +22,8 @@ const Feed: FunctionComponent<{
   const [error, setError] = useState(false);
   // solid profile to get the existing interaction data from and update it when fetching new data
   const [solidProfile, setSolidProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
+  const [exclude, setExclude] = useState<any[]>([]);
+
 
   // fetch the interaction data from solid profile into userProfile
   async function fetchInteractions() {
@@ -112,14 +114,6 @@ const Feed: FunctionComponent<{
   }
   
 
-  const dataToSend = {
-    categories: [['fashion', 3, 2], ['sports', 4, 1]],
-    gender: 0,
-    age: 30,
-    location: 'Oxford',
-    exclude: ['13456234', '82354236', '439857948']
-  };
-
   interface RequestBody {
     categories?: ((string|number)[])[],
     gender?: UserGender,
@@ -133,6 +127,7 @@ const Feed: FunctionComponent<{
     if(userProfile.gender == UserGender.MALE || userProfile.gender == UserGender.FEMALE) requestBody.gender = userProfile.gender
     if(userProfile.age) requestBody.age = userProfile.age
     if(userProfile.location) requestBody.location = userProfile.location
+    requestBody.exclude = exclude
     requestBody.categories = []
     categoryNames.forEach((categoryName: string) => {
       // we can assume each category is already in both momentum and interactions
@@ -167,7 +162,10 @@ const Feed: FunctionComponent<{
       const postDataRandom = await responseRandom.json()
       const randomData : IPost[] = postDataRandom.map((post : any[]) => mapArrayToPostObject(post))
 
-      setPosts([...posts, ...selectedData, ...randomData]);
+      const allData = selectedData.concat(randomData)
+      updateExclude(allData)
+
+      setPosts([...posts, ...allData]);
     } catch {
       setError(true)
       console.log(error)
@@ -175,6 +173,14 @@ const Feed: FunctionComponent<{
       updateInteractions();
     }
     
+  }
+
+  function updateExclude(array: IPost[]){
+    let newExclude = exclude
+    array.forEach(post => {
+      newExclude = newExclude.concat([post.id])
+    })
+    setExclude(newExclude)
   }
 
     // update the solid profile with new data

@@ -11,7 +11,7 @@ export interface IFeed {
 }
 
 export interface IPost {
-    id: number,
+    id: string,
     category: string,
     caption: string,
     like_count: number,
@@ -33,6 +33,7 @@ export interface IUserProfile {
     gender?: UserGender,
     age?: number,
     location?: string,  
+    allowLearning?:boolean,
 }
 
 export interface CategoryInteractions {

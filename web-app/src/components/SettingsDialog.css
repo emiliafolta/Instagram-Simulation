@@ -1,0 +1,7 @@
+.settingsDialogTitle{
+    color: purple;
+    text-transform: uppercase;
+    font-size: 1.5rem !important;
+    display: flex;
+    justify-content: center;
+}

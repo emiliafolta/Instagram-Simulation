@@ -4,6 +4,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
 import { FC, useState } from 'react';
 import { useSolidAuth } from "@ldo/solid-react";
+import "./SettingsDialog.css"
 
 import ProfilePanel from './ProfilePanel';
 import { ISessionInfo } from "@inrupt/solid-client-authn-browser";
@@ -29,12 +30,12 @@ const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose, userProfile, se
 
   return (
     <Dialog open={open} onClose={onClose} sx={{"& .MuiDialog-paper": paperProps}}>
-        <DialogTitle className="settings-dialog-title" >
+        <DialogTitle className="settingsDialogTitle" >
             Preferences and user details
         </DialogTitle>
         {(userProfile.isLoggedIn && userProfile.webId) 
           ?
-            <ProfilePanel webId={userProfile.webId} userProfile={userProfile} setUserProfile={setUserProfile}/>
+            <ProfilePanel webId={userProfile.webId} userProfile={userProfile} setUserProfile={setUserProfile} onClose={onClose}/>
           :
             <DialogContent className="settings-dialog-container">
               Please log in to set your preferences and user details.

@@ -1,0 +1,70 @@
+.profilePanelContainer{
+    padding: 0 1rem;
+}
+
+.panelSectionHeader{
+    color: purple;
+    text-transform: uppercase;
+    font-size: 1.3rem !important;
+    width: 100%;
+    border-bottom: 1px purple solid;
+}
+
+.categoriesContainer {
+    padding: 1rem;
+}
+/* parent width is 40rem */
+.categoryCheckboxAndLabel {
+    width: 17rem;
+}
+.categoryCheckbox{
+    color: purple !important;
+}
+
+.dataContainer{
+    padding: 2rem 1rem;
+}
+.dataInputBox{
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+.dataLabel{
+    padding: 0 1.5rem;
+    text-transform: uppercase;
+    color: purple;
+    width: 6rem;
+    display: flex;
+    justify-content: center;
+}
+
+
+.learningInputBox{
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+.learningLabel{
+    padding: 0 1.5rem;
+    text-transform: uppercase;
+    color: purple;
+    display: flex;
+    justify-content: center;
+}
+
+.submitButtonBox{
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 1rem 1rem;
+}
+.submitButton{
+    width: 8rem;
+    color: purple !important;
+    font-size: 1.1rem !important;
+    background-color: #8000801a !important;
+    border: 1.5px purple solid !important;
+}
+
+.submitButton:hover {
+    background-color: #80008061 !important;
+}

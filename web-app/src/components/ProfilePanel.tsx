@@ -3,33 +3,19 @@ import { LinkedDataObject } from "ldo";
 import { SolidProfileShape } from "../ldo/solidProfile.typings";
 import { SolidProfileShapeFactory } from "../ldo/solidProfile.ldoFactory";
 import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, Switch, TextField, Typography } from "@mui/material";
 import config from "./config";
-import { CategoryInteractions, IUserProfile, UserGender } from "./common";
+import { CategoryInteractions, IUserProfile, UserGender, categoryNames } from "./common";
 import "./ProfilePanel.css";
 
 const ProfilePanel: FunctionComponent<{ 
   webId: string,
+  onClose: () => void,
   userProfile: IUserProfile,
   setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
-}> = ({ webId, userProfile, setUserProfile }) => {
+}> = ({ webId, onClose, userProfile, setUserProfile }) => {
 
   const [solidProfile, setSolidProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
-  const [categories, setCategories] = useState<string[]>([]);
-  
-  async function fetchCategories() {
-    try {
-      const response = await fetch(config.BACKEND_BASE_URL + "/categories");
-      const categories = await response.json();
-      setCategories(categories);
-
-    } catch (error) {
-      console.log(error)
-    }
-  };
-
-  // fetch the categories when the app is opened
-  useEffect(() => { fetchCategories() }, []);
 
   // fetch the solid profile data from 
   async function fetchProfile() {
@@ -99,51 +85,95 @@ const ProfilePanel: FunctionComponent<{
   }
 
   return (
-    <Box>
+    <Box className="profilePanelContainer">
       <FormGroup>
-        {categories.map(category => (
+        <Typography className="panelSectionHeader">Your interests</Typography>
+        <Box className="categoriesContainer">
+        {categoryNames.map(category => (
              <FormControlLabel 
-              control={<Checkbox />} 
+              className="categoryCheckboxAndLabel"
+              control={<Checkbox className="categoryCheckbox"/>} 
               label={category} 
-              checked={userProfile.selectedCategories.includes(category[0])}
-              onClick={() => selectCategory(category[0])}
+              checked={userProfile.selectedCategories.includes(category)}
+              onClick={() => selectCategory(category)}
             />
             ))}
-        <TextField
-            value={userProfile.location}
-            label="Enter your location"
-            onChange={(e) => {
-              setUserProfile({
-                ...userProfile,
-                location: e.target.value
-              })
+          <Box className="learningInputBox">
+            <Typography className="learningLabel">Learn my interests from interactions:</Typography>
+            <Switch 
+              className="learningInput"
+              checked={userProfile.allowLearning}
+              onChange={(e) => {
+                  const newBool = !userProfile.allowLearning
+                  setUserProfile({
+                    ...userProfile,
+                    allowLearning: newBool
+                  })
+              }}
+            />
+          </Box>
+        </Box>
+        <Typography className="panelSectionHeader">Your details</Typography>
+        <Box className="dataContainer">
+          <Box className="dataInputBox">
+            <Typography className="dataLabel">Location:</Typography>
+            <TextField
+                className="dataInput"
+                value={userProfile.location}
+                label="Enter your location"
+                onChange={(e) => {
+                  setUserProfile({
+                    ...userProfile,
+                    location: e.target.value
+                  })
+                }}
+            />
+          </Box>
+          <Box className="dataInputBox">
+            <Typography className="dataLabel">Gender:</Typography>
+            <FormControl 
+              variant="standard" 
+              sx={{ m: 1, minWidth: 210 }}
+              className="dataInput"
+            >
+              <InputLabel>Enter your gender</InputLabel>
+              <Select
+                value={userProfile.gender}
+                label="Select your gender"
+              >
+                <MenuItem key={UserGender.MALE} value={UserGender.MALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.MALE})}>Male</MenuItem>
+                <MenuItem key={UserGender.FEMALE} value={UserGender.FEMALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.FEMALE})}>Female</MenuItem>
+                <MenuItem key={UserGender.OTHER} value={UserGender.OTHER} onClick={() => setUserProfile({...userProfile, gender: UserGender.OTHER})}>Other</MenuItem>
+                <MenuItem key={UserGender.NOT_SPECIFIED} value={UserGender.NOT_SPECIFIED} onClick={() => setUserProfile({...userProfile, gender: UserGender.NOT_SPECIFIED})}>Not specified</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Box className="dataInputBox">
+            <Typography className="dataLabel">Age:</Typography>
+            <TextField
+              className="dataInput"
+              value={userProfile.age}
+              label="Enter your age"
+              onChange={(e) => {
+                  setUserProfile({
+                    ...userProfile,
+                    age: +e.target.value
+                  })
+              }}
+            />
+          </Box>
+        </Box>   
+        <Box className="submitButtonBox">
+          <Button 
+            className="submitButton"
+            onClick={() => {
+              updateProfile();
+              onClose();
             }}
-        />
-        <TextField
-            value={userProfile.age}
-            label="Enter your age"
-            onChange={(e) => {
-                setUserProfile({
-                  ...userProfile,
-                  age: +e.target.value
-                })
-            }}
-        />
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel>Enter your gender</InputLabel>
-          <Select
-            value={userProfile.gender}
-            label="Select your gender"
           >
-            <MenuItem key={UserGender.MALE} value={UserGender.MALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.MALE})}>Male</MenuItem>
-            <MenuItem key={UserGender.FEMALE} value={UserGender.FEMALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.FEMALE})}>Female</MenuItem>
-            <MenuItem key={UserGender.OTHER} value={UserGender.OTHER} onClick={() => setUserProfile({...userProfile, gender: UserGender.OTHER})}>Other</MenuItem>
-            <MenuItem key={UserGender.NOT_SPECIFIED} value={UserGender.NOT_SPECIFIED} onClick={() => setUserProfile({...userProfile, gender: UserGender.NOT_SPECIFIED})}>Not specified</MenuItem>
-          </Select>
-        </FormControl>
-        <Button onClick={updateProfile}>
-          Submit
-        </Button>
+            Submit
+          </Button>
+        </Box>     
       </FormGroup>
     </Box>
   );

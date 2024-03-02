@@ -9,6 +9,10 @@ import {
 import { useEffect, useState } from "react";
 import { CategoryInteractions, CategoryMomentum, IUserProfile, UserGender, categoryNames } from "./components/common";
 import config from "./components/config";
+import { LinkedDataObject } from "ldo";
+import { SolidProfileShape } from "./ldo/solidProfile.typings";
+import { SolidProfileShapeFactory } from "./ldo/solidProfile.ldoFactory";
+import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
 
 const initialUserProfile: IUserProfile = {
   webId: undefined,
@@ -20,11 +24,27 @@ const initialUserProfile: IUserProfile = {
   gender: UserGender.NOT_SPECIFIED,
   age: undefined,
   location: undefined, 
+  allowLearning: false
 }
 
 export default function App () {
 
   const [userProfile, setUserProfile] = useState<IUserProfile>(initialUserProfile);
+  // const [categories, setCategories] = useState<string[]>([]);
+  
+  // async function fetchCategories() {
+  //   try {
+  //     const response = await fetch(config.BACKEND_BASE_URL + "/categories");
+  //     const categories = await response.json();
+  //     setCategories(categories);
+
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // };
+
+  // // fetch the categories when the app is opened
+  // useEffect(() => { fetchCategories() }, []);
 
   useEffect(() => {
     console.log(userProfile) 
@@ -35,13 +55,30 @@ export default function App () {
 
   useEffect(() => {
     handleIncomingRedirect().then((sessionInfo) => {
-      setUserProfile({
-        ...userProfile,
-        webId: sessionInfo?.webId,
-        isLoggedIn: sessionInfo?.isLoggedIn
-      })
+      if(sessionInfo?.webId) fetchProfile(sessionInfo.webId)
     })
   }, []);
+
+  // fetch the solid profile data from 
+  async function fetchProfile(webId: string) {
+    const rawProfile = await (
+      await solid_fetch(webId)
+    ).text();
+    const solidProfile = await SolidProfileShapeFactory.parse(
+      webId,
+      rawProfile,
+      { baseIRI: webId }
+    );
+    setUserProfile({
+      ...userProfile,
+      age: solidProfile.age,
+      gender: solidProfile.gender,
+      location: solidProfile.location,
+      selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
+      webId: webId,
+      isLoggedIn: true,
+    })
+  }
 
   return (
     <div className="App">
