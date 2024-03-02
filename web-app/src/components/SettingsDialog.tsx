@@ -8,14 +8,16 @@ import { useSolidAuth } from "@ldo/solid-react";
 import ProfilePanel from './ProfilePanel';
 import { ISessionInfo } from "@inrupt/solid-client-authn-browser";
 import config from './config';
+import { IUserProfile } from './common';
 
 interface SettingsDialogProps {
-    open: boolean
-    onClose: () => void
-    sessionInfo?: ISessionInfo
+    open: boolean,
+    onClose: () => void,
+    userProfile: IUserProfile,
+    setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
 }
 
-const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose, sessionInfo}) => {
+const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose, userProfile, setUserProfile}) => {
 
   const paperProps = {
     minWidth: "40rem", 
@@ -30,9 +32,9 @@ const SettingsDialog: FC<SettingsDialogProps> = ({open, onClose, sessionInfo}) =
         <DialogTitle className="settings-dialog-title" >
             Preferences and user details
         </DialogTitle>
-        {(sessionInfo?.isLoggedIn && sessionInfo?.webId) 
+        {(userProfile.isLoggedIn && userProfile.webId) 
           ?
-            <ProfilePanel webId={sessionInfo.webId}/>
+            <ProfilePanel webId={userProfile.webId} userProfile={userProfile} setUserProfile={setUserProfile}/>
           :
             <DialogContent className="settings-dialog-container">
               Please log in to set your preferences and user details.

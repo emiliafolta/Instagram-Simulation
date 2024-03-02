@@ -5,6 +5,8 @@ age_weight = 10
 # more than the other to have twice higher probability of being chosen
 temperature = 5
 # specify the default number of posts to fetch
-post_count = 15
+post_count = 10
 # specify the number of location posts to fetch
 location_count = 5
+# specify how many random posts to return from the posts endpoint
+random_posts_count = 10

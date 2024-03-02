@@ -5,24 +5,24 @@ import { SolidProfileShapeFactory } from "../ldo/solidProfile.ldoFactory";
 import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
 import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
 import config from "./config";
-import { UserGender } from "./common";
+import { CategoryInteractions, IUserProfile, UserGender } from "./common";
 import "./ProfilePanel.css";
 
-const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
-  const [profile, setProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
-  const [nameField, setNameField] = useState<string>("");
-  const [categories, setCategories] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [gender, setGender] = useState<UserGender>(UserGender.NOT_SPECIFIED);
-  const [age, setAge] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+const ProfilePanel: FunctionComponent<{ 
+  webId: string,
+  userProfile: IUserProfile,
+  setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
+}> = ({ webId, userProfile, setUserProfile }) => {
 
-  // function to fetch the available categories
+  const [solidProfile, setSolidProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
+  const [categories, setCategories] = useState<string[]>([]);
+  
   async function fetchCategories() {
     try {
       const response = await fetch(config.BACKEND_BASE_URL + "/categories");
-      const data = await response.json();
-      setCategories(data)
+      const categories = await response.json();
+      setCategories(categories);
+
     } catch (error) {
       console.log(error)
     }
@@ -30,11 +30,6 @@ const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
 
   // fetch the categories when the app is opened
   useEffect(() => { fetchCategories() }, []);
-
-  useEffect(() => {
-    console.log("selected categories update:");
-    console.log(selectedCategories);
-  }, [selectedCategories]);
 
   // fetch the solid profile data from 
   async function fetchProfile() {
@@ -46,22 +41,24 @@ const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
       rawProfile,
       { baseIRI: webId }
     );
-    setProfile(solidProfile);
-    setNameField(solidProfile.name || "");
-    if(solidProfile.age) setAge(solidProfile.age.toString());
-    if(solidProfile.gender) setGender(solidProfile.gender);
-    if(solidProfile.location) setLocation(solidProfile.location);
-    if(solidProfile.userSelectedCategories) setSelectedCategories(solidProfile.userSelectedCategories)
+    setSolidProfile(solidProfile);
+    setUserProfile({
+      ...userProfile,
+      age: solidProfile.age,
+      gender: solidProfile.gender,
+      location: solidProfile.location,
+      selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
+    })
   }
 
   // update the solid profile with new data
   async function updateProfile() {
-    if (profile) {
-      const modifiedProfile = profile.$clone();
-      modifiedProfile.age = +age;
-      modifiedProfile.gender = gender;
-      modifiedProfile.location = location;
-      modifiedProfile.userSelectedCategories = selectedCategories;
+    if (solidProfile) {
+      const modifiedProfile = solidProfile.$clone();
+      modifiedProfile.age = userProfile.age;
+      modifiedProfile.gender = userProfile.gender;
+      modifiedProfile.location = userProfile.location;
+      modifiedProfile.userSelectedCategories = userProfile.selectedCategories;
       const response = await solid_fetch(webId, {
         method: "PATCH",
         body: await modifiedProfile.$toSparqlUpdate(),
@@ -70,7 +67,7 @@ const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
         }
       });
       if (response.status === 200) {
-        setProfile(modifiedProfile);
+        setSolidProfile(modifiedProfile);
       }
       fetchProfile();
     }
@@ -82,16 +79,22 @@ const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
   }, [webId]);
 
   function selectCategory(cat: string) {
-    const categoryIndex = selectedCategories.findIndex((c) => c === cat);
+    const categoryIndex = userProfile.selectedCategories.findIndex((c) => c === cat);
     if (categoryIndex !== -1) {
       // Category exists, remove it
-      const updatedCategories = [...selectedCategories];
+      const updatedCategories = [...userProfile.selectedCategories];
       updatedCategories.splice(categoryIndex, 1);
-      setSelectedCategories(updatedCategories);
+      setUserProfile({
+        ...userProfile,
+        selectedCategories: updatedCategories,
+      })
     } else {
       // Category does not exist, add it
-      const updatedCategories = selectedCategories.concat([cat])
-      setSelectedCategories(updatedCategories);
+      const updatedCategories = userProfile.selectedCategories.concat([cat]);
+      setUserProfile({
+        ...userProfile,
+        selectedCategories: updatedCategories,
+      });
     }
   }
 
@@ -102,57 +105,46 @@ const ProfilePanel: FunctionComponent<{ webId: string }> = ({ webId }) => {
              <FormControlLabel 
               control={<Checkbox />} 
               label={category} 
-              checked={selectedCategories.includes(category[0])}
+              checked={userProfile.selectedCategories.includes(category[0])}
               onClick={() => selectCategory(category[0])}
             />
             ))}
         <TextField
-            value={location}
+            value={userProfile.location}
             label="Enter your location"
             onChange={(e) => {
-                setLocation(e.target.value);
+              setUserProfile({
+                ...userProfile,
+                location: e.target.value
+              })
             }}
         />
         <TextField
-            value={age}
+            value={userProfile.age}
             label="Enter your age"
             onChange={(e) => {
-                setAge(e.target.value);
+                setUserProfile({
+                  ...userProfile,
+                  age: +e.target.value
+                })
             }}
         />
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
           <InputLabel>Enter your gender</InputLabel>
           <Select
-            value={gender}
+            value={userProfile.gender}
             label="Select your gender"
           >
-            <MenuItem key={UserGender.MALE} value={UserGender.MALE} onClick={() => setGender(UserGender.MALE)}>Male</MenuItem>
-            <MenuItem key={UserGender.FEMALE} value={UserGender.FEMALE} onClick={() => setGender(UserGender.FEMALE)}>Female</MenuItem>
-            <MenuItem key={UserGender.OTHER} value={UserGender.OTHER} onClick={() => setGender(UserGender.OTHER)}>Other</MenuItem>
-            <MenuItem key={UserGender.NOT_SPECIFIED} value={UserGender.NOT_SPECIFIED} onClick={() => setGender(UserGender.NOT_SPECIFIED)}>Not specified</MenuItem>
+            <MenuItem key={UserGender.MALE} value={UserGender.MALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.MALE})}>Male</MenuItem>
+            <MenuItem key={UserGender.FEMALE} value={UserGender.FEMALE} onClick={() => setUserProfile({...userProfile, gender: UserGender.FEMALE})}>Female</MenuItem>
+            <MenuItem key={UserGender.OTHER} value={UserGender.OTHER} onClick={() => setUserProfile({...userProfile, gender: UserGender.OTHER})}>Other</MenuItem>
+            <MenuItem key={UserGender.NOT_SPECIFIED} value={UserGender.NOT_SPECIFIED} onClick={() => setUserProfile({...userProfile, gender: UserGender.NOT_SPECIFIED})}>Not specified</MenuItem>
           </Select>
         </FormControl>
         <Button onClick={updateProfile}>
           Submit
         </Button>
       </FormGroup>
-        {/* {profile ? (
-          <Box>
-            <Box>
-              {profile.name}
-            </Box>
-            <TextField
-                value={nameField}
-                label="Enter your name"
-                onChange={(e) => {
-                    setNameField(e.target.value);
-                }}
-            />
-            <Button onClick={updateProfile}>
-                Submit
-            </Button>
-          </Box>
-          ) : undefined} */}
     </Box>
   );
 }

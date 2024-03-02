@@ -9,28 +9,20 @@ import {
   handleIncomingRedirect,
   ISessionInfo
 } from '@inrupt/solid-client-authn-browser';
-import { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
+import { IUserProfile } from "./common";
+import FeedWrapper from "./FeedWrapper";
 
-const HomePage = () => {
-  // useEffect(() => {
-  //   console.log("fetching time")
-  //   fetch(config.BACKEND_BASE_URL + "/time").then(res => res.json()).then(data => {
-  //     console.log(data)
-  //   });
-  // }, []);
-  
-  const [sessionInfo, setSessionInfo] = useState<ISessionInfo | undefined>();
-  useEffect(() => {
-    handleIncomingRedirect().then((sessionInfo) => {
-      setSessionInfo(sessionInfo);
-    });
-  }, []);
+const HomePage: FunctionComponent<{
+  userProfile: IUserProfile,
+  setUserProfile: React.Dispatch<React.SetStateAction<IUserProfile>>
+}> = ({ userProfile, setUserProfile}) => {
 
   return (
     <Box>
-      <Header sessionInfo={sessionInfo}/>
+      <Header userProfile={userProfile} setUserProfile={setUserProfile}/>
       <Box className="feedContainer">
-        <Feed />
+        <FeedWrapper userProfile={userProfile} setUserProfile={setUserProfile}/>
       </Box>
     </Box>
     )

@@ -36,8 +36,8 @@ export const solidProfileContext: ContextDefinition = {
     "@type": "http://www.w3.org/2001/XMLSchema#string",
     "@container": "@set",
   },
-  likedCategories: {
-    "@id": "https://shaperepo.com/schemas/solidProfile#liked_categories",
+  categoryInteractions: {
+    "@id": "https://shaperepo.com/schemas/solidProfile#category_interactions",
     "@type": "@id",
     "@container": "@set",
   },
