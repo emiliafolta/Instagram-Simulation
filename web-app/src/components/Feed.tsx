@@ -1,5 +1,5 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MediaType, IPost, IUserProfile, CategoryMomentum, CategoryInteractions, UserGender, categoryNames, selectionWeight } from "./common";
+import { MediaType, IPost, IUserProfile, CategoryMomentum, CategoryInteractions, UserGender, categoryNames, selectionWeight, categoryEncodingSeparator } from "./common";
 import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
 import Post from './Post';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -8,7 +8,7 @@ import "./Feed.css";
 import { useSolidAuth } from "@ldo/solid-react";
 import config from "./config";
 import { LinkedDataObject } from "ldo";
-import { SolidProfileShape } from "../ldo/solidProfile.typings";
+import { CategoryLikes, SolidProfileShape } from "../ldo/solidProfile.typings";
 import { SolidProfileShapeFactory } from "../ldo/solidProfile.ldoFactory";
 import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
 
@@ -24,9 +24,56 @@ const Feed: FunctionComponent<{
   const [solidProfile, setSolidProfile] = useState<LinkedDataObject<SolidProfileShape> | undefined>();
   const [exclude, setExclude] = useState<any[]>([]);
 
+  // fetch the solid profile data from 
+  async function fetchInteractions() {
+    const rawProfile = await (
+      await solid_fetch(webId)
+    ).text();
+    const solidProfile = await SolidProfileShapeFactory.parse(
+      webId,
+      rawProfile,
+      { baseIRI: webId }
+    );
+    setSolidProfile(solidProfile);
+    // prepare initial interactions and momentum in case it's first profile load
+    const initInteractions: CategoryInteractions[] = [];
+    const initMomentum: CategoryMomentum[] = [];
+    categoryNames.forEach((categoryName: string) => {
+      const newInteraction = {categoryName: categoryName, likes: 0};
+      initInteractions.push(newInteraction);
+      const newMomentum = {categoryName: categoryName, momentum: 0};
+      initMomentum.push(newMomentum);
+    })
+    if(solidProfile.categoryLikes && (solidProfile.categoryLikes.length > 0)){
+      // we have some interactions to retrieve
+      transformIntoInteractions(solidProfile.categoryLikes, initInteractions);
+    } // otherwise go with the initialised one
+    console.log(solidProfile.categoryLikes)
+    setUserProfile({
+      ...userProfile,
+      age: solidProfile.age,
+      gender: solidProfile.gender,
+      location: solidProfile.location,
+      selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
+      categoryInteractions: initInteractions,
+      categoryMomentum: initMomentum,
+    })
+  }
+
+  function transformIntoInteractions(categoryLikes: string[], interactions: CategoryLikes[]) {
+    // categoryLikes is of the form ["mental health and lifestyle%0", "sports%12", ...]
+    categoryLikes.forEach((cat: string) => {
+      const categorySplit = cat.split(categoryEncodingSeparator, 2);
+      const categoryName = categorySplit[0];
+      const categoryLikes = +categorySplit[1];
+      const categoryIndex = interactions.findIndex(cat => cat.categoryName === categoryName);
+      interactions[categoryIndex].likes = categoryLikes;
+    })
+  }
+
 
   // fetch the interaction data from solid profile into userProfile
-  async function fetchInteractions() {
+  async function fetchLikes() {
     console.log(webId)
     const rawProfile = await (
       await solid_fetch(webId)
@@ -183,29 +230,33 @@ const Feed: FunctionComponent<{
     setExclude(newExclude)
   }
 
-    // update the solid profile with new data
-    async function updateInteractions() {
-      console.log("update interactions")
-      if (solidProfile) {
-        const modifiedProfile = solidProfile.$clone();
-        modifiedProfile.categoryInteractions = userProfile.categoryInteractions;
-        const response = await solid_fetch(webId, {
-          method: "PATCH",
-          body: await modifiedProfile.$toSparqlUpdate(),
-          headers: {
-            "Content-Type": "application/sparql-update"
-          }
+  // update the solid profile with new data
+  async function updateInteractions() {
+    console.log("update interactions")
+    if (solidProfile) {
+      const modifiedProfile = solidProfile.$clone();
+      modifiedProfile.categoryLikes = userProfile.categoryInteractions.map((category, index) => {
+        // merge the category name and likes into a single string
+        const resultingString = category.categoryName + categoryEncodingSeparator + category.likes.toString()
+        return resultingString
+      });
+      const response = await solid_fetch(webId, {
+        method: "PATCH",
+        body: await modifiedProfile.$toSparqlUpdate(),
+        headers: {
+          "Content-Type": "application/sparql-update"
+        }
 
-        }).then((response) => {
-          console.log("GOT A RESPONSE");
-          setSolidProfile(modifiedProfile);
-          // fetchInteractions();
-          // modifiedProfile.categoryInteractions?.forEach(cat =>{console.log(cat.categoryName), console.log(cat.likes)})
-        })
-        clearMomentum();
-        // automaticFetch();
-      }
+      }).then((response) => {
+        console.log("GOT A RESPONSE");
+        setSolidProfile(modifiedProfile);
+        // fetchInteractions();
+        // modifiedProfile.categoryInteractions?.forEach(cat =>{console.log(cat.categoryName), console.log(cat.likes)})
+      })
+      clearMomentum();
+      // automaticFetch();
     }
+  }
 
   const mapArrayToPostObject = (postArray : any[], selected: boolean = false) => {
     const post: IPost = {
@@ -223,29 +274,12 @@ const Feed: FunctionComponent<{
     return post
   }
 
-  const fetchDataOld = async () => {
-    setError(false);
-    try {
-      const response = await fetch(config.BACKEND_BASE_URL + "/posts");
-      const postData = await response.json();
-      const data : IPost[] = postData.map((post : any[]) => mapArrayToPostObject(post))
-  
-      setPosts([...posts, ...data]);
-    } catch (error) {
-      setError(true)
-      console.log(error)
-    } finally {
-      updateInteractions();
-    }
-  };
-
   // fetch data and interactions initially (first load)
   useEffect(() => {
     fetchInteractions();
     fetchData();
   }, []);
   
-
   // we will assume each post updates the userProfile interactions and momentum 
   // on each fetchData we will use the current data in userProfile and upload the interactions to solid profile
   // we will also clear the momentum which will be on a fetch-based basis

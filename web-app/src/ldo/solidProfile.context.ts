@@ -49,6 +49,11 @@ export const solidProfileContext: ContextDefinition = {
     "@id": "https://shaperepo.com/schemas/solidProfile#likes",
     "@type": "http://www.w3.org/2001/XMLSchema#integer",
   },
+  categoryLikes: {
+    "@id": "https://shaperepo.com/schemas/solidProfile#category_likes",
+    "@type": "http://www.w3.org/2001/XMLSchema#string",
+    "@container": "@set",
+  },
   storage: {
     "@id": "http://www.w3.org/ns/pim/space#storage",
     "@container": "@set",

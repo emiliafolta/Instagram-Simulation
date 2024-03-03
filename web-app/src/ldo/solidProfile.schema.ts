@@ -166,6 +166,27 @@ export const solidProfileSchema: Schema = {
           },
           {
             type: "TripleConstraint",
+            predicate:
+              "https://shaperepo.com/schemas/solidProfile#category_likes",
+            valueExpr: {
+              type: "NodeConstraint",
+              datatype: "http://www.w3.org/2001/XMLSchema#string",
+            },
+            min: 0,
+            max: -1,
+            annotations: [
+              {
+                type: "Annotation",
+                predicate: "http://www.w3.org/2000/01/rdf-schema#comment",
+                object: {
+                  value:
+                    "A list of strings which specify the category index and number of likes",
+                },
+              },
+            ],
+          },
+          {
+            type: "TripleConstraint",
             predicate: "http://www.w3.org/ns/pim/space#storage",
             valueExpr: {
               type: "NodeConstraint",

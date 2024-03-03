@@ -47,6 +47,10 @@ export interface SolidProfileShape {
    */
   categoryInteractions?: CategoryLikes[];
   /**
+   * A list of strings which specify the category index and number of likes
+   */
+  categoryLikes?: string[];
+  /**
    * The location of a Solid storage server related to this WebId
    */
   storage?: {

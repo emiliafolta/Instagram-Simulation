@@ -85,3 +85,25 @@ export const categoryNames = [
     "photography",
     "technology and programming"
 ]
+
+export const categoryEncodingMap = new Map<string, string>([
+    ["mental health and lifestyle", "01"],
+    ["beauty and skincare", "02"],
+    ["fitness and nutrition", "03"],
+    ["food and cooking", "04"],
+    ["sports", "05"],
+    ["movies and TV shows", "06"],
+    ["arts and music", "07"],
+    ["fashion", "08"],
+    ["educational facts and news", "09"],
+    ["business and career", "10"],
+    ["books", "11"],
+    ["games", "12"],
+    ["photography", "13"],
+    ["technology and programming", "14"]
+]);
+
+// length of the encoding of each category in 
+export const categoryEncodingLen = 2
+
+export const categoryEncodingSeparator = "%"
