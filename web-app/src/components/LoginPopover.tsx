@@ -79,7 +79,7 @@ const LoginPopover: FunctionComponent<{
                             // Get the Solid issuer the user should log into
                             const issuer = prompt(
                             "Enter your Solid Issuer",
-                            "https://solidweb.me"
+                            "https://solidcommunity.net/"
                             );
                             if (!issuer) return;
                             login(issuer);

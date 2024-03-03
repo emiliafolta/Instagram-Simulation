@@ -24,7 +24,7 @@ const initialUserProfile: IUserProfile = {
   gender: UserGender.NOT_SPECIFIED,
   age: undefined,
   location: undefined, 
-  allowLearning: false
+  allowLearning: true
 }
 
 export default function App () {

@@ -12,6 +12,14 @@ import { CategoryLikes, SolidProfileShape } from "../ldo/solidProfile.typings";
 import { SolidProfileShapeFactory } from "../ldo/solidProfile.ldoFactory";
 import { fetch as solid_fetch } from "@inrupt/solid-client-authn-browser";
 
+interface RequestBody {
+  categories?: ((string|number)[])[],
+  gender?: UserGender,
+  age?: number,
+  location?: string,
+  exclude?: string[]
+}
+
 const Feed: FunctionComponent<{
   webId: string,
   userProfile: IUserProfile,
@@ -71,81 +79,6 @@ const Feed: FunctionComponent<{
     })
   }
 
-
-  // fetch the interaction data from solid profile into userProfile
-  async function fetchLikes() {
-    console.log(webId)
-    const rawProfile = await (
-      await solid_fetch(webId)
-    ).text();
-    const solidProfile = await SolidProfileShapeFactory.parse(
-      webId,
-      rawProfile,
-      { baseIRI: webId }
-    );
-    // prepare initial interactions and momentum in case it's first profile load
-    const initInteractions: CategoryInteractions[] = [];
-    const initMomentum: CategoryMomentum[] = [];
-    categoryNames.forEach((categoryName: string) => {
-      const newInteraction = {categoryName: categoryName, likes: 0};
-      initInteractions.push(newInteraction);
-      const newMomentum = {categoryName: categoryName, momentum: 0};
-      initMomentum.push(newMomentum);
-    })
-
-    setSolidProfile(solidProfile);
-    // categoryInteractions should be initialised in the solid profile to [{cat_name, likes}, ...]
-    if(solidProfile.categoryInteractions){
-      const categoryInteractions = [...solidProfile.categoryInteractions];
-      console.log(categoryInteractions)
-      // if the categoryInteractions are there but not initialised - initialise them
-      if(categoryInteractions.length == 0){
-        console.log('if if')
-        setUserProfile({
-          ...userProfile,
-          age: solidProfile.age,
-          gender: solidProfile.gender,
-          location: solidProfile.location,
-          selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
-          categoryInteractions: initInteractions,
-          categoryMomentum: initMomentum,
-        })
-      } else { // otherwise get them from solid profile
-        console.log('if eeelse')
-        setUserProfile({
-          ...userProfile,
-          age: solidProfile.age,
-          gender: solidProfile.gender,
-          location: solidProfile.location,
-          selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
-          categoryInteractions: solidProfile.categoryInteractions,
-          categoryMomentum: initMomentum,
-        })
-      }
-    } else if(userProfile.categoryInteractions) { // interactions are not in solid but are here
-      console.log('if else')
-      setUserProfile({
-        ...userProfile,
-        age: solidProfile.age,
-        gender: solidProfile.gender,
-        location: solidProfile.location,
-        selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
-        categoryMomentum: initMomentum,
-      })
-    } else {
-      console.log('else')
-      setUserProfile({
-        ...userProfile,
-        age: solidProfile.age,
-        gender: solidProfile.gender,
-        location: solidProfile.location,
-        selectedCategories: solidProfile.userSelectedCategories ? solidProfile.userSelectedCategories : [],
-        categoryInteractions: initInteractions,
-        categoryMomentum: initMomentum,
-      })
-    }
-  }
-
   // initialise/clear the momentum in userProfile
   async function clearMomentum() {
     const initMomentum: CategoryMomentum[] = [];
@@ -157,16 +90,6 @@ const Feed: FunctionComponent<{
       ...userProfile,
       categoryMomentum: initMomentum
     })
-    console.log("clear momentum")
-  }
-  
-
-  interface RequestBody {
-    categories?: ((string|number)[])[],
-    gender?: UserGender,
-    age?: number,
-    location?: string,
-    exclude?: string[]
   }
   
   async function fetchData() {
@@ -232,7 +155,6 @@ const Feed: FunctionComponent<{
 
   // update the solid profile with new data
   async function updateInteractions() {
-    console.log("update interactions")
     if (solidProfile) {
       const modifiedProfile = solidProfile.$clone();
       modifiedProfile.categoryLikes = userProfile.categoryInteractions.map((category, index) => {
@@ -248,7 +170,6 @@ const Feed: FunctionComponent<{
         }
 
       }).then((response) => {
-        console.log("GOT A RESPONSE");
         setSolidProfile(modifiedProfile);
         // fetchInteractions();
         // modifiedProfile.categoryInteractions?.forEach(cat =>{console.log(cat.categoryName), console.log(cat.likes)})
