@@ -59,6 +59,29 @@ const ProfilePanel: FunctionComponent<{
     }
   }
 
+  // reset the solid profile by deleting the user data
+  async function resetProfile() {
+    if (solidProfile) {
+      const modifiedProfile = solidProfile.$clone();
+      modifiedProfile.age = undefined;
+      modifiedProfile.gender = undefined;
+      modifiedProfile.location = undefined;
+      modifiedProfile.userSelectedCategories = [];
+      modifiedProfile.categoryLikes = [];
+      const response = await solid_fetch(webId, {
+        method: "PATCH",
+        body: await modifiedProfile.$toSparqlUpdate(),
+        headers: {
+          "Content-Type": "application/sparql-update"
+        }
+      });
+      if (response.status === 200) {
+        setSolidProfile(modifiedProfile);
+      }
+      fetchProfile();
+    }
+  }
+
   // fetch the solid profile when webId becomes available
   useEffect(() => {
     fetchProfile();
@@ -163,6 +186,18 @@ const ProfilePanel: FunctionComponent<{
             />
           </Box>
         </Box>   
+        <Box className="buttons">
+        <Box className="eraseButtonBox">
+          <Button 
+            className="eraseButton"
+            onClick={() => {
+              resetProfile();
+              onClose();
+            }}
+          >
+            Delete my data
+          </Button>
+        </Box> 
         <Box className="submitButtonBox">
           <Button 
             className="submitButton"
@@ -173,6 +208,7 @@ const ProfilePanel: FunctionComponent<{
           >
             Submit
           </Button>
+        </Box>
         </Box>     
       </FormGroup>
     </Box>

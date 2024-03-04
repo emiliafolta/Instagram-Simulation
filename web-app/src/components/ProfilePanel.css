@@ -60,11 +60,35 @@
 .submitButton{
     width: 8rem;
     color: purple !important;
-    font-size: 1.1rem !important;
+    font-size: 1rem !important;
     background-color: #8000801a !important;
     border: 1.5px purple solid !important;
 }
 
 .submitButton:hover {
     background-color: #80008061 !important;
+}
+
+.eraseButtonBox{
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 1rem 1rem;
+}
+.eraseButton{
+    width: 12rem;
+    color: purple !important;
+    font-size: 1rem !important;
+    background-color: #8000801a !important;
+    border: 1.5px purple solid !important;
+}
+
+.eraseButton:hover {
+    background-color: #80008061 !important;
+}
+
+.buttons{
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

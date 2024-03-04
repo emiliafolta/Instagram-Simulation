@@ -23,3 +23,36 @@
     font-size: 3rem !important;
     color: purple;
 }
+
+.selected{
+    margin: 0.2rem !important;
+    padding: 0.3rem;
+    color: purple;
+    border: 1px purple solid;
+    display: flex;
+    align-items: center;
+    border-radius: 0.5rem;
+    /* align-content: center; */
+    justify-content: center;
+    font-size: 0.9rem !important;
+    background-color: #80008024;
+}
+
+.disabled{
+    margin: 0.2rem !important;
+    padding: 0.3rem;
+    color: gray;
+    border: 1px purple solid;
+    display: flex;
+    align-items: center;
+    border-radius: 0.5rem;
+    justify-content: center;
+    font-size: 0.9rem !important;
+}
+
+.algorithmIndicator{
+    position: fixed;
+    top: 6rem;
+    padding: 0.5rem;
+    width: 7rem;
+}

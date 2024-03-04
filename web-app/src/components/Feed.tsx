@@ -125,7 +125,7 @@ const Feed: FunctionComponent<{
         body: JSON.stringify(requestBody),
       })
       const postDataSelected = await responseSelected.json()
-      const selectedData : IPost[] = postDataSelected.map((post : any[]) => mapArrayToPostObject(post, true))
+      const selectedData : IPost[] = postDataSelected.map((post : any[]) => mapArrayToPostObject(post, !(!(userProfile.location || (userProfile.gender && userProfile.gender != UserGender.NOT_SPECIFIED) || userProfile.age || (userProfile.selectedCategories.length > 0) || (userProfile.allowLearning)))))
 
       // get some random posts
       const responseRandom = await fetch(config.BACKEND_BASE_URL + '/posts')

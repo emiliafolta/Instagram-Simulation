@@ -76,21 +76,27 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
                 <IconButton 
                     className="postLikeButton" 
                     aria-label="like" 
+                    disabled={!userProfile.allowLearning}
                     onClick={() => {
                         setLiked(!liked);
                         if(userProfile.allowLearning) onCategoryInteraction(category, true);
                     }}
                 >
-                    {liked ? <FavoriteIcon className="postButton" /> : <FavoriteBorderIcon className="postButton"/>}
+                    {liked 
+                    ? <FavoriteIcon className={userProfile.allowLearning ? "postButton" : "disabledButton"} /> 
+                    : <FavoriteBorderIcon className={userProfile.allowLearning ? "postButton" : "disabledButton"}/>}
                 </IconButton>
                 <IconButton 
                     aria-label="dislike" 
+                    disabled={!userProfile.allowLearning}
                     onClick={() => {
                         setDisliked(!disliked);
                         if(userProfile.allowLearning) onCategoryInteraction(category, false);
                     }}
                 >
-                    {disliked ? <ThumbDownAltIcon className="postButton"/> : <ThumbDownOffAltIcon className="postButton"/>}
+                    {disliked 
+                    ? <ThumbDownAltIcon className={userProfile.allowLearning ? "postButton" : "disabledButton"}/> 
+                    : <ThumbDownOffAltIcon className={userProfile.allowLearning ? "postButton" : "disabledButton"}/>}
                 </IconButton>
             </CardActions>
         </Card>

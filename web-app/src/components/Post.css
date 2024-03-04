@@ -35,6 +35,10 @@
     color: purple !important;
 }
 
+.disabledButton{
+    color: #9a9a9a !important;
+}
+
 .postCategory{
     display: flex;
     padding: 0.5rem;
