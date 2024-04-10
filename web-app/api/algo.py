@@ -3,6 +3,7 @@ from config import gender_weight, age_weight, temperature, post_count
 import math
 from typing import List
 import random
+import pymysql
 
 db = mysql.connector.connect(
     host="localhost",
@@ -10,6 +11,15 @@ db = mysql.connector.connect(
     passwd="password",
     database="instagram"
 )
+
+
+
+# db = pymysql.connect(
+#     user='root', 
+#     passwd='password', 
+#     host='localhost', 
+#     database='instagram'
+# )
 
 cursor = db.cursor()
 

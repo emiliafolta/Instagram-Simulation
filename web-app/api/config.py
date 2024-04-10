@@ -7,6 +7,6 @@ temperature = 5
 # specify the default number of posts to fetch
 post_count = 10
 # specify the number of location posts to fetch
-location_count = 5
+location_count = 4
 # specify how many random posts to return from the posts endpoint
-random_posts_count = 10
+random_posts_count = 6

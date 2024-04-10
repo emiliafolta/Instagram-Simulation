@@ -49,6 +49,7 @@ const Post: FC<IPost> = ({id, category, caption, like_count, media_type, media_u
         <Card className={selected ? "postContainerSelected" : "postContainer"} key={id}>
             <CardHeader
                 className="postCategory"
+                sx={{"MuiClassHeader-title": {fontSize: "1rem",} }}
                 avatar={
                     <Avatar sx={{ bgcolor: "purple" }} className="postCategoryAvatar" >
                         {category.charAt(0)}

@@ -5,6 +5,7 @@ import urllib.request
 import os
 from typing import Dict, NamedTuple
 from config import location_count
+import pymysql
 
 class Post(NamedTuple):
     id: int
@@ -29,6 +30,15 @@ db = mysql.connector.connect(
     passwd="password",
     database="instagram"
 )
+
+
+
+# db = pymysql.connect(
+#     user='root', 
+#     passwd='password', 
+#     host='localhost', 
+#     database='instagram'
+# )
 
 cursor = db.cursor()
 

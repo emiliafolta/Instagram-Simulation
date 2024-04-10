@@ -9,9 +9,9 @@ from algo import add_category_scores, add_age_scores, add_gender_scores, calcula
 from config import random_posts_count
 
 app = Flask(__name__)
-# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-CORS(app)
+# CORS(app)
 
 @app.route('/time')
 def get_current_time():
