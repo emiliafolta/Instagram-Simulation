@@ -37,7 +37,11 @@ External Factors: Consider external factors such as current events, trends, or c
 Feedback Mechanisms: Implement mechanisms for users to provide explicit feedback on recommended posts, allowing the system to refine recommendations over time based on user input.
 
 Note:
-To run the flask backend first allow running scripts using:
+To run the frontend enter web-app and run: 
+npm run build
+npm start
+
+To run the flask backend first enter web-app/api and allow running scripts using:
 Set-ExecutionPolicy Unrestricted -Scope Process
 
 Then activate the virtual environment using:
