@@ -10,8 +10,9 @@ Each user profile consists of the following fields:
 2. username (for user study this will be the participant id)
 3. list of categories this user likes
 4. other personal data
-    - location field?
-    - ???
+    - location field
+    - age field
+    - gender field
 
 
 Potential factors to consider when creating a user profile:
